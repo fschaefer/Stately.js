@@ -92,11 +92,11 @@
                         
                         //throw error if event already exists
                         if (stateMachine[eventName]) {
-                            throw new TypeError ('Stately.js: Event already exists in this state stateMachine: `' + eventName + '`.');
+                            throw new TypeError ('Stately.js: Event already exists in this state machine: `' + eventName + '`.');
                         }
                         
                         //assign decorated events to state machine
-                        stateMachine[eventName] = (function(stateName, eventName) {
+                        stateMachine[eventName] = (function(stateName,eventName) {
                             
                             //the decorator
                             return function () {
@@ -139,7 +139,7 @@
                                 return stateMachine;
                             };
                             
-                        })(stateName, eventName);
+                        })(stateName,eventName);
                         
                     }
                     
