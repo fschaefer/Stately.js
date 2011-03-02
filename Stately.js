@@ -9,7 +9,7 @@
  * 
  */
  
-(function (exports) {
+(function(exports){
     
     //helper to indetify options type
     var toString = Object.prototype.toString;
@@ -56,12 +56,12 @@
         };
         
         //check for given options
-        if (options && toString.call (options) === '[object Function]') {
+        if (toString.call (options) === '[object Function]') {
             
             //if options is a function use it for state changes
             stateOptions.onStateChange = options;
             
-        } else if (options && toString.call (options) === '[object Object]') {
+        } else if (toString.call (options) === '[object Object]') {
             
             //else extend the default options
             for (var option in options) {
