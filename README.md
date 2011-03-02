@@ -4,6 +4,10 @@
 
 Stately.js is a JavaScript based finite-state machine (FSM) engine inspired by phred's [stately](http://github.com/phred/stately).
 
+## Usage
+
+You can create a new state machine with either `new Stately(statesObject, [options])` or the factory method `Stately.machine(statesObject, [options])`. The `statesObject` is a plain object with `stateObject` objects attached to properties. The keys of the `statesObject` are the `states` of the machine. The attached `stateObject` objects model the machines states. There are two options you can feed into the optional `options` object. One is the `onStateChange` option, to define a callback that gets called when the machine transitioned into another state: `{ onStateChange: function (event, oldstate, newstate) {} }`. If no other settings are needed you can feed in the `callback` diretly, instead of the `options` object. The other one is the `invalidEventErrors` option, that will let the machine throw a `Stately.InvalidEventError` exception, if an event is called that is not available in the current machine state: `{ invalidEventErrors: true }`.
+
 ## Example
 
     var door = Stately.machine ({
