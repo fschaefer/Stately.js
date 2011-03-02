@@ -109,8 +109,8 @@
                                         throw new Stately.InvalidEventError ('Stately.js: Invalid event: `' + eventName + '` for current state: `' + currentState.name + '`.');
                                     }
                                     
-                                    //or just return the current state 
-                                    return currentState;
+                                    //or just return the state machine 
+                                    return stateMachine;
                                 }
                                 
                                 //run event and transition to next state
@@ -135,8 +135,8 @@
                                     stateOptions.onStateChange.call (stateMachine, eventName, lastState.name, nextState.name);
                                 }
                                 
-                                //return the current state
-                                return currentState;
+                                //return the state machine
+                                return stateMachine;
                             };
                             
                         })(stateName, eventName);
