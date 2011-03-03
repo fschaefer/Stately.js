@@ -5,7 +5,7 @@
  * Dual licensed under the MIT (MIT_LICENSE.txt)
  * and GPL Version 2 (GPL_LICENSE.txt) licenses.
  *
- * Version: 0.9.0
+ * Version: 0.9.5
  * 
  */
  
@@ -55,7 +55,7 @@
             
         };
         
-        //check for given options
+        //handle given options
         if (toString.call (options) === '[object Function]') {
             
             //if options is a function use it for state changes
@@ -87,29 +87,32 @@
                 //walk over events
                 for (var eventName in statesStore[stateName]) {
                     
-                    //check own properties
-                    if (statesStore[stateName].hasOwnProperty (eventName)) {
-                        
-                        //throw error if event already exists
-                        if (stateMachine[eventName]) {
-                            throw new TypeError ('Stately.js: Event already exists in this state machine: `' + eventName + '`.');
-                        }
+                    //check for own properties and function
+                    if (statesStore[stateName].hasOwnProperty (eventName)
+                        && toString.call (statesStore[stateName][eventName]) === '[object Function]') {
                         
                         //assign decorated events to state machine
-                        stateMachine[eventName] = (function(stateName,eventName) {
+                        //if event with same name already exists, chain it
+                        stateMachine[eventName] = (function(stateName,eventName,nextEvent) {
                             
                             //the decorator
                             return function () {
                                 
+                                //flag to indicate event is handled by event chain
+                                var handled = false;
+                                
                                 //if the current state doesn't handle the event
                                 if (states[stateName] !== currentState) {
-                                
-                                    //throw an invalid event error if options ask for it
-                                    if (stateOptions.invalidEventErrors) {
+                                    
+                                    //let other events in chain handle this state
+                                    handled = (nextEvent && nextEvent.apply (statesStore, arguments));
+                                    
+                                    //if options ask for it and nothing handled this event, throw an invalid event error
+                                    if (!handled && stateOptions.invalidEventErrors) {
                                         throw new Stately.InvalidEventError ('Stately.js: Invalid event: `' + eventName + '` for current state: `' + currentState.name + '`.');
                                     }
                                     
-                                    //or just return the state machine 
+                                    //or just return the state machine
                                     return stateMachine;
                                 }
                                 
@@ -139,7 +142,7 @@
                                 return stateMachine;
                             };
                             
-                        })(stateName,eventName);
+                        })(stateName,eventName,stateMachine[eventName]);
                         
                     }
                     

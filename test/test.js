@@ -154,28 +154,6 @@ var test = {
             
             this.assert(errorReportOk, 'Report InvalidStateError.');
             
-            //event already exists
-            errorReportOk = false;
-            
-            try {
-                Stately.machine({
-                    'OPEN': {
-                        close: function () {
-                            return this.CLOSED;
-                        }
-                    },
-                    'CLOSED': {
-                        close: function () { //event already exists in 'OPEN' state
-                            return this.OPEN;
-                        }
-                    }
-                });
-            } catch (ex) {
-                errorReportOk = true;
-            }
-            
-            this.assert(errorReportOk, 'Report an already existing event.');
-            
             //ignore invalid events
             
             door = Stately.machine({
