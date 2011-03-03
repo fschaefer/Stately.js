@@ -35,7 +35,7 @@
         
         //state machine default options
         var stateOptions = {
-            onStateChange: new Function (),
+            onTransition: new Function (),
             invalidEventErrors: false
         },
         
@@ -59,7 +59,7 @@
         if (toString.call (options) === '[object Function]') {
             
             //if options is a function use it for state changes
-            stateOptions.onStateChange = options;
+            stateOptions.onTransition = options;
             
         } else if (toString.call (options) === '[object Object]') {
             
@@ -135,7 +135,7 @@
                                 
                                 //notify state change function if the state has changed
                                 if (lastState !== nextState) {
-                                    stateOptions.onStateChange.call (stateMachine, eventName, lastState.name, nextState.name);
+                                    stateOptions.onTransition.call (stateMachine, eventName, lastState.name, nextState.name);
                                 }
                                 
                                 //return the state machine

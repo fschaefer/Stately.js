@@ -37,8 +37,8 @@ var test = {
             
             this.assert(door, 'Create finite state machine.');
             this.assert(door.getMachineState() === 'OPEN', 'Report initial state.');
-            this.assert(door.close() && door.getMachineState() === 'CLOSED', 'Transition into new state.');
-            this.assert(door.open() && door.getMachineState() === 'OPEN', 'Transition into anoter state.');
+            this.assert(door.close().getMachineState() === 'CLOSED', 'Transition into new state.');
+            this.assert(door.open().getMachineState() === 'OPEN', 'Transition into anoter state.');
             
         }},
         { name:"Epsilon transitions.", method:function () {
@@ -58,12 +58,14 @@ var test = {
             
             this.assert(door, 'Create finite state machine.');
             this.assert(door.getMachineState() === 'OPEN', 'Report initial state.');
-            this.assert(door.close() && door.getMachineState() === 'OPEN', 'Transition into new state.');
+            this.assert(door.close().getMachineState() === 'OPEN', 'Transition into new state.');
             
         }},
-        { name:"Monitor state changes.", method:function () {
+        { name:"Monitor transitions.", method:function () {
             
-            var self = this;
+            var transitionedEvent = false,
+            transitionedOldstate = false,
+            transitionedNewstate = false;
             
             var door = Stately.machine({
                 'OPEN': {
@@ -78,15 +80,22 @@ var test = {
                 }
             }, function (event, oldstate, newstate) {
                 
-                self.assert(event === 'close', 'Report correct event');
-                self.assert(oldstate === 'OPEN', 'Report initial state.');
-                self.assert(newstate === 'CLOSED', 'Report target state.');
+                transitionedEvent = event;
+                transitionedOldstate = oldstate;
+                transitionedNewstate = newstate;
                 
             });
             
-            this.assert(door.close() && door.getMachineState() === 'CLOSED', 'Transition into new state.');
+            this.assert(door.close().getMachineState() === 'CLOSED', 'Transition into new state.');
+            this.assert(transitionedEvent === 'close', 'Report correct event');
+            this.assert(transitionedOldstate === 'OPEN', 'Report initial state.');
+            this.assert(transitionedNewstate === 'CLOSED', 'Report target state.');
             
-            //repeat with options.onStateChange
+            transitionedEvent = false,
+            transitionedOldstate = false,
+            transitionedNewstate = false;
+            
+            //repeat with options.onTransition
             door = Stately.machine({
                 'OPEN': {
                     close: function () {
@@ -99,16 +108,19 @@ var test = {
                     }
                 }
             }, {
-                onStateChange: function (event, oldstate, newstate) {
+                onTransition: function (event, oldstate, newstate) {
                     
-                    self.assert(event === 'close', 'Report correct event');
-                    self.assert(oldstate === 'OPEN', 'Report initial state.');
-                    self.assert(newstate === 'CLOSED', 'Report target state.');
+                    transitionedEvent = event;
+                    transitionedOldstate = oldstate;
+                    transitionedNewstate = newstate;
                     
                 }
             });
             
-            this.assert(door.close() && door.getMachineState() === 'CLOSED', 'Transition into new state.');
+            this.assert(door.close().getMachineState() === 'CLOSED', 'Transition into new state.');
+            this.assert(transitionedEvent === 'close', 'Report correct event');
+            this.assert(transitionedOldstate === 'OPEN', 'Report initial state.');
+            this.assert(transitionedNewstate === 'CLOSED', 'Report target state.');
             
         }},
         { name:"Use exceptions to report errors.", method:function () {
@@ -171,8 +183,8 @@ var test = {
                 invalidEventErrors: false //explicit here (but default)
             });
             
-            self.assert(door.getMachineState() === 'OPEN', 'Report initial state.');
-            self.assert(door.open(), 'Ignore invalid event in current state.');
+            this.assert(door.getMachineState() === 'OPEN', 'Report initial state.');
+            this.assert(door.open(), 'Ignore invalid event in current state.');
             
         }}
     ],
