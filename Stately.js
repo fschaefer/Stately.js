@@ -153,12 +153,18 @@
                 
                 //initial state is the first passed in to stately
                 if (!currentState) {
+                    
+                    //make initial state the current state
                     currentState = statesStore[stateName];
+                    
                 }
                 
             }
             
         }
+        
+        //notify callback about the initial state
+        stateOptions.onTransition.call (stateMachine, undefined, undefined, currentState.name);
         
         //return the new state machine
         return stateMachine;
@@ -176,4 +182,4 @@
     //export stately object
     exports.Stately = Stately;
     
-})(window);
+})(window,undefined);
