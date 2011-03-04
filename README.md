@@ -123,6 +123,7 @@ The other one is the `invalidEventErrors` option, that will let the machine thro
     });
 
     radio.play().pause().play().pause().stop();
+    //undefined => STOPPED
     //STOPPED => PLAYING
     //PLAYING => PAUSED
     //PAUSED => PLAYING
