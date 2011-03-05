@@ -35,7 +35,7 @@
         
         //state machine default options
         var stateOptions = {
-            onTransition: new Function (),
+            onTransition: function () {},
             invalidEventErrors: false
         },
         
@@ -52,6 +52,61 @@
             getMachineState: function () {
                 return currentState.name;
             }
+            
+        },
+        
+        //the event decorator factory function
+        transition = function (stateName, eventName, nextEvent) {
+            
+            //the decorator
+            return function () {
+                
+                //flag to indicate event is handled by event chain
+                var handled = false;
+                
+                //if the current state doesn't handle the event
+                if (states[stateName] !== currentState) {
+                    
+                    //let other events in chain handle this state
+                    handled = (nextEvent && nextEvent.apply (statesStore, arguments));
+                    
+                    //if options ask for it and nothing handled this event, throw an invalid event error
+                    if (!handled && stateOptions.invalidEventErrors) {
+                        throw new Stately.InvalidEventError ('Stately.js: Invalid event: `' + eventName + '` for current state: `' + currentState.name + '`.');
+                    }
+                    
+                    //or just return the state machine
+                    return stateMachine;
+                }
+                
+                //run event and transition to next state
+                var nextState = statesStore[stateName][eventName].apply (statesStore, arguments),
+                
+                //store last change
+                lastState = currentState;
+                
+                //if state machine doesn't handle the returned state
+                if (!nextState || !nextState.name || !statesStore[nextState.name]) {
+                    
+                    //throw a invalid state exception
+                    throw new Stately.InvalidStateError ('Stately.js: Transitioned into invalid state: `' + statesStore[stateName][eventName] + '`.');
+                    
+                }
+                
+                //update current state
+                currentState = nextState;
+                
+                //if changing state
+                if (lastState !== nextState) {
+                    
+                    //notify callback that the state was changed
+                    stateOptions.onTransition.call (stateMachine, eventName, lastState.name, nextState.name);
+                    
+                }
+                
+                //return the state machine
+                return stateMachine;
+            };
             
         };
         
@@ -88,61 +143,10 @@
                 for (var eventName in statesStore[stateName]) {
                     
                     //check for own properties and function
-                    if (statesStore[stateName].hasOwnProperty (eventName)
-                        && toString.call (statesStore[stateName][eventName]) === '[object Function]') {
+                    if (statesStore[stateName].hasOwnProperty (eventName) && toString.call (statesStore[stateName][eventName]) === '[object Function]') {
                         
                         //assign decorated events to state machine
-                        //if event with same name already exists, chain it
-                        stateMachine[eventName] = (function(stateName,eventName,nextEvent) {
-                            
-                            //the decorator
-                            return function () {
-                                
-                                //flag to indicate event is handled by event chain
-                                var handled = false;
-                                
-                                //if the current state doesn't handle the event
-                                if (states[stateName] !== currentState) {
-                                    
-                                    //let other events in chain handle this state
-                                    handled = (nextEvent && nextEvent.apply (statesStore, arguments));
-                                    
-                                    //if options ask for it and nothing handled this event, throw an invalid event error
-                                    if (!handled && stateOptions.invalidEventErrors) {
-                                        throw new Stately.InvalidEventError ('Stately.js: Invalid event: `' + eventName + '` for current state: `' + currentState.name + '`.');
-                                    }
-                                    
-                                    //or just return the state machine
-                                    return stateMachine;
-                                }
-                                
-                                //run event and transition to next state
-                                var nextState = statesStore[stateName][eventName].apply (statesStore, arguments),
-                                
-                                //store last change
-                                lastState = currentState;
-                                
-                                //if state machine doesn't handle the returned state
-                                if (!nextState || !nextState.name || !statesStore[nextState.name]) {
-                                    
-                                    //throw a invalid state exception
-                                    throw new Stately.InvalidStateError ('Stately.js: Transitioned into invalid state: `' + statesStore[stateName][eventName] + '`.');
-                                    
-                                }
-                                
-                                //update current state
-                                currentState = nextState;
-                                
-                                //notify state change function if the state has changed
-                                if (lastState !== nextState) {
-                                    stateOptions.onTransition.call (stateMachine, eventName, lastState.name, nextState.name);
-                                }
-                                
-                                //return the state machine
-                                return stateMachine;
-                            };
-                            
-                        })(stateName,eventName,stateMachine[eventName]);
+                        stateMachine[eventName] = transition (stateName, eventName, stateMachine[eventName]);
                         
                     }
                     
