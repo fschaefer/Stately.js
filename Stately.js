@@ -5,7 +5,7 @@
  * Dual licensed under the MIT (MIT_LICENSE.txt)
  * and GPL Version 2 (GPL_LICENSE.txt) licenses.
  *
- * Version: 0.9.5
+ * Version: 0.9.6
  * 
  */
  
@@ -39,7 +39,7 @@
             invalidEventErrors: false
         },
         
-        //current state of the machine
+        //current state of machine
         currentState,
         
         //store for states
@@ -48,64 +48,97 @@
         //the state machine
         stateMachine = {
             
-            //evaluates the current state
+            //evaluates current state
             getMachineState: function () {
                 return currentState.name;
             }
             
         },
         
-        //the event decorator factory function
+        //event decorator factory function
         transition = function (stateName, eventName, nextEvent) {
             
             //the decorator
             return function () {
                 
-                //flag to indicate event is handled by event chain
-                var handled = false;
+                //indicates event is handled somewhere else in event chain
+                var eventHandled = false,
                 
-                //if the current state doesn't handle the event
+                //store last machine state
+                lastState = currentState,
+                
+                //new state machine changed into
+                nextState,
+                
+                //return the state machine if no event returns something
+                eventValue = stateMachine;
+                
+                //if atteched event handler doesn't handle this event
                 if (states[stateName] !== currentState) {
                     
-                    //let other events in chain handle this state
-                    handled = (nextEvent && nextEvent.apply (statesStore, arguments));
+                    //try other events in chain
+                    if (nextEvent) {
+                        
+                        //let next event function handle this event
+                        eventValue = nextEvent.apply (statesStore, arguments);
+                        
+                        //event is handled
+                        eventHandled = true;
+                        
+                    }
                     
-                    //if options ask for it and nothing handled this event, throw an invalid event error
-                    if (!handled && stateOptions.invalidEventErrors) {
+                    //throw invalid event error if options ask for it and nothing handled this event
+                    if (!eventHandled && stateOptions.invalidEventErrors) {
                         throw new Stately.InvalidEventError ('Stately.js: Invalid event: `' + eventName + '` for current state: `' + currentState.name + '`.');
                     }
                     
-                    //or just return the state machine
-                    return stateMachine;
+                    //or return events return value
+                    return eventValue;
                 }
                 
-                //run event and transition to next state
-                var nextState = statesStore[stateName][eventName].apply (statesStore, arguments),
+                //run event
+                eventValue = statesStore[stateName][eventName].apply (statesStore, arguments);
                 
-                //store last change
-                lastState = currentState;
+                //check if return value of event is an object or array
+                if (toString.call (eventValue) === '[object Object]') {
+                    
+                    //assume object is next state
+                    nextState = eventValue;
+                    
+                    //return state machine
+                    eventValue = stateMachine;
+                    
+                } else if (toString.call (eventValue) === '[object Array]' && eventValue.length >= 1) {
+                    
+                    //else first element is next state
+                    nextState = eventValue[0];
+                    
+                    //second element is return value
+                    eventValue = eventValue[1];
+                    
+                }
                 
-                //if state machine doesn't handle the returned state
+                //if state machine cannot handle returned state
                 if (!nextState || !nextState.name || !statesStore[nextState.name]) {
                     
-                    //throw a invalid state exception
+                    //throw invalid state exception
                     throw new Stately.InvalidStateError ('Stately.js: Transitioned into invalid state: `' + statesStore[stateName][eventName] + '`.');
                     
                 }
                 
-                //update current state
+                //transition into next state
                 currentState = nextState;
                 
-                //if changing state
+                //if state has changed
                 if (lastState !== nextState) {
                     
-                    //notify callback that the state was changed
+                    //notify callback
                     stateOptions.onTransition.call (stateMachine, eventName, lastState.name, nextState.name);
                     
                 }
                 
-                //return the state machine
-                return stateMachine;
+                //return desired value
+                return eventValue;
             };
             
         };
@@ -118,7 +151,7 @@
             
         } else if (toString.call (options) === '[object Object]') {
             
-            //else extend the default options
+            //else extend default options
             for (var option in options) {
                 
                 //own properties only
@@ -167,7 +200,7 @@
             
         }
         
-        //notify callback about the initial state
+        //notify callback about initial state
         stateOptions.onTransition.call (stateMachine, undefined, undefined, currentState.name);
         
         //return the new state machine

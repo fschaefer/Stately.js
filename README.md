@@ -19,7 +19,7 @@ The other one is the `invalidEventErrors` option, that will let the machine thro
 
 ## Examples
 
-    var door = Stately.machine ({
+    var door = Stately.machine({
         'OPEN': {
             close: function () {
                 return this.CLOSED;

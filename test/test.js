@@ -3,7 +3,7 @@ var test = {
     
     //the actual tests to perform
     tests:[
-        { name:"Create a very basic finite state machine.", method:function () {
+        { name:"Create basic finite state machine.", method:function () {
             
             var simple = Stately.machine({
                 'TEST': {
@@ -167,7 +167,6 @@ var test = {
             this.assert(errorReportOk, 'Report InvalidStateError.');
             
             //ignore invalid events
-            
             door = Stately.machine({
                 'OPEN': {
                     close: function () {
@@ -185,6 +184,23 @@ var test = {
             
             this.assert(door.getMachineState() === 'OPEN', 'Report initial state.');
             this.assert(door.open(), 'Ignore invalid event in current state.');
+            
+        }},
+        { name:"Events return value.", method:function () {
+            
+            var door = Stately.machine({
+                'OPEN': {
+                    close: function () {
+                        return [this.CLOSED, 'the door is closed'];
+                    }
+                },
+                'CLOSED': {}
+            });
+            
+            this.assert(door, 'Create finite state machine.');
+            this.assert(door.getMachineState() === 'OPEN', 'Report initial state.');
+            this.assert(door.close() === 'the door is closed', 'Return value of event.');
+            this.assert(door.getMachineState() === 'CLOSED', 'Report new state.');
             
         }}
     ],
