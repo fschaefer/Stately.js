@@ -16,7 +16,10 @@
     
     //custom exception for a invalid event
     function InvalidEventError (message) {
+        
+        //the error message
         this.message = message;
+        
     }
     
     //inherit from error object
@@ -24,7 +27,10 @@
     
     //custom exception for a invalid state
     function InvalidStateError (message) {
+        
+        //the error message
         this.message = message;
+        
     }
     
     //inherit from error object
@@ -35,8 +41,13 @@
         
         //state machine default options
         var stateOptions = {
+            
+            //noop transition callback
             onTransition: function () {},
+            
+            //ignore invalid events
             invalidEventErrors: false
+            
         },
         
         //current state of machine
@@ -50,7 +61,10 @@
             
             //evaluates current state
             getMachineState: function () {
+                
+                //return name as string
                 return currentState.name;
+                
             }
             
         },
@@ -94,6 +108,7 @@
                     
                     //or return events return value
                     return eventValue;
+                    
                 }
                 
                 //run event
@@ -139,6 +154,7 @@
                 
                 //return desired value
                 return eventValue;
+                
             };
             
         };
@@ -151,19 +167,22 @@
             
         } else if (toString.call (options) === '[object Object]') {
             
-            //else extend default options
+            //else walk over options object
             for (var option in options) {
                 
                 //own properties only
                 if (options.hasOwnProperty (option)) {
+                    
+                    //copy option
                     stateOptions[option] = options[option];
+                    
                 }
                 
             }
             
         }
         
-        //walk over states
+        //walk over states object
         for (var stateName in states) {
             
             //check own properties
@@ -205,6 +224,7 @@
         
         //return the new state machine
         return stateMachine;
+        
     };
     
     //factory for new machines
@@ -212,8 +232,10 @@
         return new Stately (states, options);
     };
     
-    //export custom exceptions
+    //export InvalidEventError exception
     Stately.InvalidEventError = InvalidEventError;
+    
+    //export InvalidStateError exception
     Stately.InvalidStateError = InvalidStateError;
     
     //export stately object
