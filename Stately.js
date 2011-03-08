@@ -73,13 +73,45 @@
             currentState,
             
             //store for states
-            statesStore = {},
+            statesStore = {
+                
+                //function to transition into another state
+                setMachineState: function setMachineState (nextState) {
+                    
+                    //store last machine state
+                    var lastState = currentState;
+                    
+                    //if state machine cannot handle returned state
+                    if (!nextState || !nextState.name || !statesStore[nextState.name]) {
+                        
+                        //throw invalid state exception
+                        throw new InvalidStateError ('Stately.js: Transitioned into invalid state: `' + setMachineState.caller + '`.');
+                        
+                    }
+                    
+                    //transition into next state
+                    currentState = nextState;
+                    
+                    //if state has changed
+                    if (lastState !== nextState) {
+                        
+                        //notify callback
+                        stateOptions.onTransition.call (statesStore, undefined, lastState.name, nextState.name);
+                        
+                    }
+                    
+                    //return the state store
+                    return this;
+                    
+                }
+                
+            },
             
             //the state machine
             stateMachine = {
                 
                 //evaluates current state
-                getMachineState: function () {
+                getMachineState: function getMachineState () {
                     
                     //return name as string
                     return currentState.name;
@@ -89,7 +121,7 @@
             },
             
             //event decorator factory function
-            transition = function (stateName, eventName, nextEvent) {
+            transition = function transition (stateName, eventName, nextEvent) {
                 
                 //the decorator
                 return function () {
@@ -97,8 +129,8 @@
                     //indicates event is handled somewhere else in event chain
                     var eventHandled = false,
                     
-                    //store last machine state
-                    lastState = currentState,
+                    //helper to store last state
+                    lastState,
                     
                     //new state machine changed into
                     nextState,
@@ -122,7 +154,7 @@
                         
                         //throw invalid event error if options ask for it and nothing handled this event
                         if (!eventHandled && stateOptions.invalidEventErrors) {
-                            throw new Stately.InvalidEventError ('Stately.js: Invalid event: `' + eventName + '` for current state: `' + currentState.name + '`.');
+                            throw new InvalidEventError ('Stately.js: Invalid event: `' + eventName + '` for current state: `' + currentState.name + '`.');
                         }
                         
                         //or return events return value
@@ -164,9 +196,12 @@
                     if (!nextState || !nextState.name || !statesStore[nextState.name]) {
                         
                         //throw invalid state exception
-                        throw new Stately.InvalidStateError ('Stately.js: Transitioned into invalid state: `' + statesStore[stateName][eventName] + '`.');
+                        throw new InvalidStateError ('Stately.js: Transitioned into invalid state: `' + statesStore[stateName][eventName] + '`.');
                         
                     }
+                    
+                    //store last machine state
+                    lastState = currentState;
                     
                     //transition into next state
                     currentState = nextState;
@@ -175,7 +210,7 @@
                     if (lastState !== nextState) {
                         
                         //notify callback
-                        stateOptions.onTransition.call (stateMachine, eventName, lastState.name, nextState.name);
+                        stateOptions.onTransition.call (statesStore, eventName, lastState.name, nextState.name);
                         
                     }
                     

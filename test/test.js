@@ -46,7 +46,9 @@ var test = {
             var door = Stately.machine({
                 'OPEN': {
                     close: function () {
-                        return this.CLOSED.open.call(this); //epsilon transition
+                        //epsilon transition with calling other states event function;
+                        //will call the events function but won't call the onTransition handler
+                        return this.CLOSED.open.call(this);
                     }
                 },
                 'CLOSED': {
@@ -59,6 +61,25 @@ var test = {
             this.assert(door, 'Create finite state machine.');
             this.assert(door.getMachineState() === 'OPEN', 'Report initial state.');
             this.assert(door.close().getMachineState() === 'OPEN', 'Transition into new state.');
+            
+            door = Stately.machine({
+                'OPEN': {
+                    close: function () {
+                        //epsilon transition without calling other states event;
+                        //will do a regular transform into the other state
+                        this.setMachineState(this.CLOSED);
+                    }
+                },
+                'CLOSED': {
+                    open: function () {
+                        return this.OPEN;
+                    }
+                }
+            });
+            
+            this.assert(door, 'Create finite state machine.');
+            this.assert(door.getMachineState() === 'OPEN', 'Report initial state.');
+            this.assert(door.close().getMachineState() === 'CLOSED', 'Transition into new state.');
             
         }},
         { name:"Monitor transitions.", method:function () {
