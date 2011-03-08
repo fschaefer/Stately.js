@@ -175,32 +175,46 @@ var test = {
                 },
                 'CLOSED': {
                     open: function () {
-                        return this.OPEN; //invalid state;
+                        return this.OPEN;
                     }
                 }
             }, {
-                invalidEventErrors: false //explicit here (but default)
+                invalidEventErrors: false //explicit here (default)
             });
             
             this.assert(door.getMachineState() === 'OPEN', 'Report initial state.');
             this.assert(door.open(), 'Ignore invalid event in current state.');
             
         }},
-        { name:"Events return value.", method:function () {
+        { name:"Event return values.", method:function () {
             
             var door = Stately.machine({
                 'OPEN': {
                     close: function () {
                         return [this.CLOSED, 'the door is closed'];
+                    },
+                    next1: function () {},
+                    next2: function () {
+                        return this;
+                    },
+                    next3: function () {
+                        return this.CLOSED;
                     }
                 },
-                'CLOSED': {}
+                'CLOSED': {
+                    reset: function () {
+                        return this.OPEN;
+                    }
+                }
             });
             
             this.assert(door, 'Create finite state machine.');
             this.assert(door.getMachineState() === 'OPEN', 'Report initial state.');
             this.assert(door.close() === 'the door is closed', 'Return value of event.');
             this.assert(door.getMachineState() === 'CLOSED', 'Report new state.');
+            this.assert(door.reset().next1().getMachineState() === 'OPEN', 'Stay in state.');
+            this.assert(door.reset().next2().getMachineState() === 'OPEN', 'Stay in state.');
+            this.assert(door.reset().next3().getMachineState() === 'CLOSED', 'Report new state.');
             
         }}
     ],

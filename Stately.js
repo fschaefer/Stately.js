@@ -133,11 +133,19 @@
                     //run event
                     eventValue = statesStore[stateName][eventName].apply (statesStore, arguments);
                     
-                    //check if return value of event is an object or array
-                    if (toString.call (eventValue) === '[object Object]') {
+                    //check return value of event
+                    if (eventValue === undefined) {
                         
-                        //assume object is next state
-                        nextState = eventValue;
+                        //nothing returned, stay in current state
+                        nextState = currentState;
+                        
+                        //return state machine
+                        eventValue = stateMachine;
+                        
+                    } else if (toString.call (eventValue) === '[object Object]') {
+                        
+                        //if stateStore object is returned (this in event function) stay in current state
+                        nextState = (eventValue === statesStore ? currentState : eventValue);
                         
                         //return state machine
                         eventValue = stateMachine;
