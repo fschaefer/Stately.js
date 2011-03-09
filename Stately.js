@@ -75,6 +75,14 @@
             //store for states
             statesStore = {
                 
+                //evaluates current state
+                getMachineState: function getMachineState () {
+                    
+                    //return name as string
+                    return currentState.name;
+                    
+                },
+                
                 //function to transition into another state
                 setMachineState: function setMachineState (nextState) {
                     
@@ -110,13 +118,8 @@
             //the state machine
             stateMachine = {
                 
-                //evaluates current state
-                getMachineState: function getMachineState () {
-                    
-                    //return name as string
-                    return currentState.name;
-                    
-                }
+                //copy function to public state machine object
+                getMachineState: statesStore.getMachineState
                 
             },
             
