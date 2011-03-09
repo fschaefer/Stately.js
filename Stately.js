@@ -287,6 +287,14 @@
                 
             }
             
+            //if there is no initial state
+            if (!currentState) {
+                
+                //throw invalid state exception
+                throw new InvalidStateError ('Stately.js: Invalid initial state.');
+                
+            }
+            
             //notify callback about initial state
             stateOptions.onTransition.call (stateMachine, undefined, undefined, currentState.name);
             
