@@ -14,7 +14,7 @@
     //the state machine engine
     var Stately = (function(undefined){
         
-        //helper to indetify options type
+        //helper to idetify options type
         var toString = Object.prototype.toString,
         
         //custom exception for invalid events
@@ -78,7 +78,7 @@
                 //evaluates current state
                 getMachineState: function getMachineState () {
                     
-                    //return name as string
+                    //return current state as string
                     return currentState.name;
                     
                 },
@@ -155,9 +155,12 @@
                             
                         }
                         
-                        //throw invalid event error if options ask for it and nothing handled this event
+                        //if options ask for it and nothing handled this event
                         if (!eventHandled && stateOptions.invalidEventErrors) {
+                            
+                            //throw invalid event error
                             throw new InvalidEventError ('Stately.js: Invalid event: `' + eventName + '` for current state: `' + currentState.name + '`.');
+                            
                         }
                         
                         //or return events return value
