@@ -5,7 +5,7 @@
  * Dual licensed under the MIT (MIT_LICENSE.txt)
  * and GPL Version 2 (GPL_LICENSE.txt) licenses.
  * 
- * Version: 0.9.7
+ * Version: 0.9.8
  * 
  */
 
@@ -14,7 +14,7 @@
     //the state machine engine
     var Stately = (function(undefined){
         
-        //helper to idetify options type
+        //helper to identify options type
         var toString = Object.prototype.toString,
         
         //custom exception for invalid events
@@ -56,26 +56,33 @@
         })();
         
         //constructor
-        function Stately (states, options) {
+        function Stately (states) {
             
-            //state machine default options
-            var stateOptions = {
+            //current state of the machine
+            var currentState,
+            
+            //storage for notification callbacks
+            notificationStore = [],
+            
+            //notify callbacks about a transition
+            notify = function () {
                 
-                //noop transition callback
-                onTransition: function () {},
+                //make copy of notification storage
+                var notifications = notificationStore.slice ();
                 
-                //ignore invalid events
-                invalidEventErrors: false
-                
+                //walk over stored callbacks
+                for (var i = 0, l = notifications.length; i < l; i++) {
+                    
+                    //and notify them
+                    notifications[i].apply (this, arguments);
+                    
+                }
             },
             
-            //current state of machine
-            currentState,
-            
-            //store for states
-            statesStore = {
+            //storage for machine states
+            stateStore = {
                 
-                //evaluates current state
+                //evaluates the current state
                 getMachineState: function getMachineState () {
                     
                     //return current state as string
@@ -90,7 +97,7 @@
                     var lastState = currentState;
                     
                     //if state machine cannot handle returned state
-                    if (!nextState || !nextState.name || !statesStore[nextState.name]) {
+                    if (!nextState || !nextState.name || !stateStore[nextState.name]) {
                         
                         //throw invalid state exception
                         throw new InvalidStateError ('Stately.js: Transitioned into invalid state: `' + setMachineState.caller + '`.');
@@ -103,8 +110,8 @@
                     //if state has changed
                     if (lastState !== nextState) {
                         
-                        //notify callback
-                        stateOptions.onTransition.call (statesStore, undefined, lastState.name, nextState.name);
+                        //notify notification callbacks about transition
+                        notify.call (stateStore, undefined, lastState.name, nextState.name);
                         
                     }
                     
@@ -119,7 +126,54 @@
             stateMachine = {
                 
                 //copy function to public state machine object
-                getMachineState: statesStore.getMachineState
+                getMachineState: stateStore.getMachineState,
+                
+                //store a new notification callback
+                bind: function (callback) {
+                    
+                    //if we have a new notification callback
+                    if (callback) {
+                    
+                        //store it in notification storage
+                        notificationStore.push (callback);
+                    }
+                    
+                    //return the state machine
+                    return this;
+                },
+                
+                //remove a notification callback from storage
+                unbind: function (callback) {
+                    
+                    //if no callback is given
+                    if (!callback) {
+                        
+                        //reset notification storage
+                        notificationStore = [];
+                        
+                    } else {
+                        
+                        //walk over stored callbacks
+                        for (var i = 0, l = notificationStore.length; i < l; i++) {
+                            
+                            //if callback is found in notification storage
+                            if (notificationStore[i] === callback) {
+                                
+                                //remove it
+                                notificationStore.splice (i, 1);
+                                
+                                //and stop walking
+                                break;
+                                
+                            }
+                            
+                        }
+                        
+                    }
+                    
+                    //return the state machine
+                    return this;
+                }
                 
             },
             
@@ -129,11 +183,8 @@
                 //the decorator
                 return function () {
                     
-                    //indicates event is handled somewhere else in event chain
-                    var eventHandled = false,
-                    
                     //helper to store last state
-                    lastState,
+                    var lastState,
                     
                     //new state machine changed into
                     nextState,
@@ -141,37 +192,25 @@
                     //return the state machine if no event returns something
                     eventValue = stateMachine;
                     
-                    //if atteched event handler doesn't handle this event
-                    if (states[stateName] !== currentState) {
+                    //if attached event handler doesn't handle this event
+                    if (stateStore[stateName] !== currentState) {
                         
                         //try other events in chain
                         if (nextEvent) {
                             
                             //let next event function handle this event
-                            eventValue = nextEvent.apply (statesStore, arguments);
-                            
-                            //event is handled
-                            eventHandled = true;
-                            
+                            eventValue = nextEvent.apply (stateStore, arguments);
                         }
                         
-                        //if options ask for it and nothing handled this event
-                        if (!eventHandled && stateOptions.invalidEventErrors) {
-                            
-                            //throw invalid event error
-                            throw new InvalidEventError ('Stately.js: Invalid event: `' + eventName + '` for current state: `' + currentState.name + '`.');
-                            
-                        }
-                        
-                        //or return events return value
+                        //or return value of action
                         return eventValue;
                         
                     }
                     
-                    //run event
-                    eventValue = statesStore[stateName][eventName].apply (statesStore, arguments);
+                    //run action
+                    eventValue = stateStore[stateName][eventName].apply (stateStore, arguments);
                     
-                    //check return value of event
+                    //check return value of action
                     if (eventValue === undefined) {
                         
                         //nothing returned, stay in current state
@@ -182,8 +221,8 @@
                         
                     } else if (toString.call (eventValue) === '[object Object]') {
                         
-                        //if stateStore object is returned (this in event function) stay in current state
-                        nextState = (eventValue === statesStore ? currentState : eventValue);
+                        //if state store object is returned ('this' in action function) stay in current state
+                        nextState = (eventValue === stateStore ? currentState : eventValue);
                         
                         //return state machine
                         eventValue = stateMachine;
@@ -199,10 +238,10 @@
                     }
                     
                     //if state machine cannot handle returned state
-                    if (!nextState || !nextState.name || !statesStore[nextState.name]) {
+                    if (!nextState || !nextState.name || !stateStore[nextState.name]) {
                         
                         //throw invalid state exception
-                        throw new InvalidStateError ('Stately.js: Transitioned into invalid state: `' + statesStore[stateName][eventName] + '`.');
+                        throw new InvalidStateError ('Stately.js: Transitioned into invalid state: `' + stateStore[stateName][eventName] + '`.');
                         
                     }
                     
@@ -215,8 +254,8 @@
                     //if state has changed
                     if (lastState !== nextState) {
                         
-                        //notify callback
-                        stateOptions.onTransition.call (statesStore, eventName, lastState.name, nextState.name);
+                        //notify callbacks
+                        notify.call (stateStore, eventName, lastState.name, nextState.name);
                         
                     }
                     
@@ -227,43 +266,20 @@
                 
             };
             
-            //handle given options
-            if (toString.call (options) === '[object Function]') {
-                
-                //if options is a function use it for state changes
-                stateOptions.onTransition = options;
-                
-            } else if (toString.call (options) === '[object Object]') {
-                
-                //else walk over options object
-                for (var option in options) {
-                    
-                    //own properties only
-                    if (options.hasOwnProperty (option)) {
-                        
-                        //copy option
-                        stateOptions[option] = options[option];
-                        
-                    }
-                    
-                }
-                
-            }
-            
             //walk over states object
             for (var stateName in states) {
                 
                 //check own properties
                 if (states.hasOwnProperty (stateName)) {
                     
-                    //store states in store
-                    statesStore[stateName] = states[stateName];
+                    //store states in storage
+                    stateStore[stateName] = states[stateName];
                     
                     //walk over events
-                    for (var eventName in statesStore[stateName]) {
+                    for (var eventName in stateStore[stateName]) {
                         
-                        //check for own properties and function
-                        if (statesStore[stateName].hasOwnProperty (eventName) && toString.call (statesStore[stateName][eventName]) === '[object Function]') {
+                        //check for own properties and type function
+                        if (stateStore[stateName].hasOwnProperty (eventName) && toString.call (stateStore[stateName][eventName]) === '[object Function]') {
                             
                             //assign decorated events to state machine
                             stateMachine[eventName] = transition (stateName, eventName, stateMachine[eventName]);
@@ -272,14 +288,14 @@
                         
                     }
                     
-                    //attach states name to object in store
-                    statesStore[stateName].name = stateName;
+                    //attach states name to object in storage
+                    stateStore[stateName].name = stateName;
                     
-                    //initial state is the first passed in to stately
+                    //initial state is the first passed in state
                     if (!currentState) {
                         
                         //make initial state the current state
-                        currentState = statesStore[stateName];
+                        currentState = stateStore[stateName];
                         
                     }
                     
@@ -295,17 +311,14 @@
                 
             }
             
-            //notify callback about initial state
-            stateOptions.onTransition.call (stateMachine, undefined, undefined, currentState.name);
-            
             //return the new state machine
             return stateMachine;
             
         }
         
         //a factory for new machines
-        Stately.machine = function (states, options) {
-            return new Stately (states, options);
+        Stately.machine = function (states) {
+            return new Stately (states);
         };
         
         //InvalidEventError exception
@@ -319,7 +332,7 @@
         
     })();
     
-    //export stately object
+    //export Stately object
     exports.Stately = Stately;
     
-})(window);
+})(this);

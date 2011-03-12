@@ -1,3 +1,4 @@
+
 ![Stately.js Logo](https://github.com/fschaefer/Stately.js/raw/master/misc/Stately.js.png)
 
 ## What is it?
@@ -10,13 +11,13 @@ Stately.js is a JavaScript based finite-state machine (FSM) or finite-state auto
 
 A new state machine can be created with either the new operator:
 
-    var machine = new Stately(statesObject, [options]);
+    var machine = new Stately(statesObject);
 
 or the factory method:
 
-    var machine = Stately.machine(statesObject, [options]);
+    var machine = Stately.machine(statesObject);
 
-Both will return a new `stateMachine` object, with all events from all states attached to it. The machine will immediately transition (with event `undefined`, from  state `undefined`) into the initial state (the first attached `stateObject`). Beside the events the `stateMachine` object has a `getMachineState()` function, returning the current name of the machines state. 
+Both will return a new `stateMachine` object, with all events from all states attached to it. The machine will transition into the initial state (the first attached `stateObject`) immediately. In addition to the events the `stateMachine` object has a `getMachineState()` function, returning the current name of the machines state, and `bind()` and `unbind()` functions, to register callbacks to receive `notifications` when the machine transitions into another state.
 
 The `statesObject` is an object  with `stateObject` objects attached as properties.
 The property names of the `statesObject` are the `states` of the machine. The attached `stateObject` objects model the machines states with the property names as `events` and the connected functions as `actions`:
@@ -42,35 +43,7 @@ The property names of the `statesObject` are the `states` of the machine. The at
         }
     });
 
-If different states use the same event identifier (function name), the `events` are chained up and the machine handles calling the correct `action` for the current state (if the `event` is handled in the current state). If the event is not handled in the current state, it is ignored or throws an `Stately.InvalidEventError` when the appropriate option is set.
-
-### Options
-
-There are two options that can be passed into the optional `options` object:
-
-One is the `onTransition` callback, to attach a function that gets called when the machine transitioned into another state:
-
-    Stately.machine({ ... }, {
-        onTransition:  function (event, oldState, newState) {
-            ...
-        }
-    });
-
-`event` - The event that triggered the transition.
-`oldState` - The old state the machine is transitioned from.
-`newState` - The new state the machine is transitioned into.
-
-If no other settings are needed you can feed in the `callback` directly, instead of the `options` object:
-
-    Stately.machine({ ... },  function (event, oldState, newState) {
-        ...
-    });
-
-The other option is `invalidEventErrors`, which defaults to `false`. If set to `true` the machine throws a `Stately.InvalidEventError` exception, if an event is called that is not available in the current machine state:
-
-    Stately.machine({ ... }, {
-        invalidEventErrors: true
-    });
+If different states use the same event identifier (function name), the `events` are chained up and the machine handles calling the correct `action` for the current state (if the `event` is handled in the current state). If the event is not handled in the current state, it is ignored.
 
 ### Transitions
 
@@ -90,7 +63,7 @@ There are several ways a `action` can transition the machine into another state.
     
     ...
 
-If a action should not transition the machine into another state, just omit the return value (or return the current state).
+If an action should not transition the machine into another state, just omit the return value (or return the current state).
 
 Sometimes it is desired to return a value from an action. In this case the return value must be an array with two elements. The first element is the next state the machine should transition into, and the second element the return value:
 
@@ -130,7 +103,7 @@ For asynchronous actions there is `getMachineState()` and  `setMachineState(next
     
     ...
 
-Because `this` refers to the `stateStore`, it is possible to call anothers state action (note: this won't trigger the `onTransition` callback):
+Because `this` refers to the `stateStore`, it is also possible to call an others state action (note: this won't trigger the `notification` callbacks):
 
     ...
     
@@ -148,6 +121,20 @@ Because `this` refers to the `stateStore`, it is possible to call anothers state
     }
     
     ...
+
+### Notifications
+
+Once in a while, it is useful to get a `notification` when the machine transitions into another state. Therefore the `stateMachine` object has `bind(callback)` and `unbind(callback)` to register and unregister notification handlers that get called when the states change. A notification callback has the following form: 
+
+    function notification (event, oldState, newState) {
+        ...
+    }
+
+`event` - The event that triggered the transition.
+`oldState` - The old state the machine is transitioned from.
+`newState` - The new state the machine is transitioned into.
+
+Inside the `notification`, `this` refers to the internal `stateStore`.
 
 ## Examples
 
@@ -239,7 +226,7 @@ Because `this` refers to the `stateStore`, it is possible to call anothers state
                 return this.STOPPED;
             }
         }
-    }, function (event, oldState, newState) {
+    }).bind(function (event, oldState, newState) {
         
         var transition = oldState + ' => ' + newState;
         
@@ -257,10 +244,8 @@ Because `this` refers to the `stateStore`, it is possible to call anothers state
     });
     
     radio.play().pause().play().pause().stop();
-    //undefined => STOPPED
     //STOPPED => PLAYING
     //PLAYING => PAUSED
     //PAUSED => PLAYING
     //PLAYING => PAUSED
     //PAUSED => STOPPED
-
