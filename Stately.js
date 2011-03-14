@@ -17,25 +17,6 @@
         //helper to identify options type
         var toString = Object.prototype.toString,
         
-        //custom exception for invalid events
-        InvalidEventError = (function(){
-            
-            //custom event constructor
-            function InvalidEventError (message) {
-                
-                //the error message
-                this.message = message;
-                
-            }
-            
-            //inherit from error object
-            InvalidEventError.prototype = new Error ();
-            
-            //return custom event
-            return InvalidEventError;
-            
-        })(),
-        
         //custom exception for invalid states
         InvalidStateError = (function(){
             
@@ -320,9 +301,6 @@
         Stately.machine = function (states) {
             return new Stately (states);
         };
-        
-        //InvalidEventError exception
-        Stately.InvalidEventError = InvalidEventError;
         
         //InvalidStateError exception
         Stately.InvalidStateError = InvalidStateError;
