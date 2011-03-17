@@ -37,7 +37,7 @@
         })();
         
         //constructor
-        function Stately (states) {
+        function Stately (statesObject) {
             
             //current state of the machine
             var currentState,
@@ -248,13 +248,13 @@
             };
             
             //walk over states object
-            for (var stateName in states) {
+            for (var stateName in statesObject) {
                 
                 //check own properties
-                if (states.hasOwnProperty (stateName)) {
+                if (statesObject.hasOwnProperty (stateName)) {
                     
                     //store states in storage
-                    stateStore[stateName] = states[stateName];
+                    stateStore[stateName] = statesObject[stateName];
                     
                     //walk over events
                     for (var eventName in stateStore[stateName]) {
@@ -298,8 +298,8 @@
         }
         
         //a factory for new machines
-        Stately.machine = function (states) {
-            return new Stately (states);
+        Stately.machine = function (statesObject) {
+            return new Stately (statesObject);
         };
         
         //InvalidStateError exception
