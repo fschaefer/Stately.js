@@ -92,7 +92,7 @@
                     if (lastState !== nextState) {
                         
                         //notify notification callbacks about transition
-                        notify.call (stateStore, undefined, lastState.name, nextState.name);
+                        notify.call (stateStore, arguments[1], lastState.name, nextState.name);
                         
                     }
                     
@@ -164,11 +164,8 @@
                 //the decorator
                 return function () {
                     
-                    //helper to store last state
-                    var lastState,
-                    
                     //new state machine changed into
-                    nextState,
+                    var nextState,
                     
                     //return the state machine if no event returns something
                     eventValue = stateMachine;
@@ -218,27 +215,8 @@
                         
                     }
                     
-                    //if state machine cannot handle returned state
-                    if (!nextState || !nextState.name || !stateStore[nextState.name]) {
-                        
-                        //throw invalid state exception
-                        throw new InvalidStateError ('Stately.js: Transitioned into invalid state: `' + stateStore[stateName][eventName] + '`.');
-                        
-                    }
-                    
-                    //store last machine state
-                    lastState = currentState;
-                    
                     //transition into next state
-                    currentState = nextState;
-                    
-                    //if state has changed
-                    if (lastState !== nextState) {
-                        
-                        //notify callbacks
-                        notify.call (stateStore, eventName, lastState.name, nextState.name);
-                        
-                    }
+                    stateStore.setMachineState (nextState, eventName);
                     
                     //return desired value
                     return eventValue;
