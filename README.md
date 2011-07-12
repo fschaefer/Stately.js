@@ -1,4 +1,3 @@
-
 ![Stately.js Logo](https://github.com/fschaefer/Stately.js/raw/master/misc/Stately.js.png)
 
 ## What is it?
@@ -44,6 +43,21 @@ The property names of the `statesObject` are the `states` of the machine. The at
     });
 
 If different states use the same event identifier (function name), the `events` are chained up and the machine handles calling the correct `action` for the current state (if the `event` is handled in the current state). If the event is not handled in the current state, it is ignored.
+
+If no `action` function is required, the desired `state` can be attached to the `event` as string directly:
+   
+    var machine = Stately.machine({
+        'STATE0': {
+            event: 'STATE1'
+        },
+        'STATE1': {
+            event: 'STATE2'
+        },
+        'STATE2':{
+            event: 'STATE0',
+            anotherEvent: 'STATE1'
+        }
+    });
 
 ### Transitions
 
@@ -135,6 +149,10 @@ Once in a while, it is useful to get a `notification` when the machine transitio
 `newState` - The new state the machine is transitioned into.
 
 Inside the `notification`, `this` refers to the internal `stateStore`.
+
+### Hooks
+    ...
+
 
 ## Examples
 
