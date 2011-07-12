@@ -74,8 +74,14 @@
                 //function to transition into another state
                 setMachineState: function setMachineState (nextState) {
                     
+                    //leave state hook
+                    var onLeaveState,
+                    
+                    //enter state hook
+                    onEnterState,
+                    
                     //store last machine state
-                    var lastState = currentState;
+                    lastState = currentState;
                     
                     //if state machine cannot handle returned state
                     if (!nextState || !nextState.name || !stateStore[nextState.name]) {
@@ -85,11 +91,33 @@
                         
                     }
                     
-                    //transition into next state
-                    currentState = nextState;
-                    
                     //if state has changed
-                    if (lastState !== nextState) {
+                    if (nextState !== currentState) {
+                        
+                        //retrieve leave state hook
+                        onLeaveState = stateMachine['onleave' + currentState.name];
+                        
+                        //if a hook is attached
+                        if (onLeaveState) {
+                            
+                            //apply it
+                            onLeaveState.apply (stateStore);
+                            
+                        }
+                        
+                        //transition into next state
+                        currentState = nextState;
+                        
+                        //retrieve enter state hook
+                        onEnterState = stateMachine['onenter' + currentState.name] || stateMachine['on' + currentState.name];
+                        
+                        //if a hook is attached
+                        if (onEnterState) {
+                            
+                            //apply it
+                            onEnterState.apply (stateStore);
+                            
+                        }
                         
                         //notify notification callbacks about transition
                         notify.call (stateStore, arguments[1], lastState.name, nextState.name);
@@ -164,8 +192,15 @@
                 //the decorator
                 return function () {
                     
+                    
+                    //before event hook
+                    var onBeforeEvent,
+                    
+                    //after event hook
+                    onAfterEvent,
+                    
                     //new state machine changed into
-                    var nextState,
+                    nextState,
                     
                     //return the state machine if no event returns something
                     eventValue = stateMachine;
@@ -185,8 +220,30 @@
                         
                     }
                     
+                    //retrieve before event hook
+                    onBeforeEvent = stateMachine['onbefore' + eventName];
+                    
+                    //if a hook is attached
+                    if (onBeforeEvent) {
+                        
+                        //apply it
+                        onBeforeEvent.apply (stateStore);
+                        
+                    }
+                    
                     //run action
                     eventValue = stateStore[stateName][eventName].apply (stateStore, arguments);
+                    
+                    //retrieve after event hook
+                    onAfterEvent = stateMachine['onafter' + eventName] || stateMachine['on' + eventName];
+                    
+                    //if a hook is attached
+                    if (onAfterEvent) {
+                        
+                        //apply it
+                        onAfterEvent.apply (stateStore);
+                        
+                    }
                     
                     //check return value of action
                     if (eventValue === undefined) {
@@ -237,11 +294,33 @@
                     //walk over events
                     for (var eventName in stateStore[stateName]) {
                         
-                        //check for own properties and type function
-                        if (stateStore[stateName].hasOwnProperty (eventName) && toString.call (stateStore[stateName][eventName]) === '[object Function]') {
+                        //check for own property
+                        if (stateStore[stateName].hasOwnProperty (eventName)) {
                             
-                            //assign decorated events to state machine
-                            stateMachine[eventName] = transition (stateName, eventName, stateMachine[eventName]);
+                            //if type is a string, assume it is a state
+                            if (toString.call (stateStore[stateName][eventName]) === '[object String]') {
+                                
+                                //decorate it
+                                stateStore[stateName][eventName] = (function(stateName){
+                                    
+                                    //with a function
+                                    return function () {
+                                        
+                                        //returning the given state
+                                        return this[stateName];
+                                        
+                                    };
+                                    
+                                })(stateStore[stateName][eventName]);
+                            }
+                            
+                            //if type function
+                            if (toString.call (stateStore[stateName][eventName]) === '[object Function]') {
+                                
+                                //assign decorated events to state machine
+                                stateMachine[eventName] = transition (stateName, eventName, stateMachine[eventName]);
+                                
+                            }
                             
                         }
                         
