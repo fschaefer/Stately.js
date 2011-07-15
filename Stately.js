@@ -101,7 +101,7 @@
                         if (onLeaveState) {
                             
                             //apply it
-                            onLeaveState.apply (stateStore);
+                            onLeaveState.call (stateStore, arguments[1], lastState.name, nextState.name);
                             
                         }
                         
@@ -115,7 +115,7 @@
                         if (onEnterState) {
                             
                             //apply it
-                            onEnterState.apply (stateStore);
+                            onEnterState.call (stateStore, arguments[1], lastState.name, nextState.name);
                             
                         }
                         
@@ -227,23 +227,12 @@
                     if (onBeforeEvent) {
                         
                         //apply it
-                        onBeforeEvent.apply (stateStore);
+                        onBeforeEvent.call (stateStore, eventName, currentState.name, currentState.name);
                         
                     }
                     
                     //run action
                     eventValue = stateStore[stateName][eventName].apply (stateStore, arguments);
-                    
-                    //retrieve after event hook
-                    onAfterEvent = stateMachine['onafter' + eventName] || stateMachine['on' + eventName];
-                    
-                    //if a hook is attached
-                    if (onAfterEvent) {
-                        
-                        //apply it
-                        onAfterEvent.apply (stateStore);
-                        
-                    }
                     
                     //check return value of action
                     if (eventValue === undefined) {
@@ -269,6 +258,17 @@
                         
                         //second element is return value
                         eventValue = eventValue[1];
+                        
+                    }
+                    
+                    //retrieve after event hook
+                    onAfterEvent = stateMachine['onafter' + eventName] || stateMachine['on' + eventName];
+                    
+                    //if a hook is attached
+                    if (onAfterEvent) {
+                        
+                        //apply it
+                        onAfterEvent.call (stateStore, eventName, currentState.name, nextState.name);
                         
                     }
                     
