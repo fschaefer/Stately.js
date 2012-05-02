@@ -42,6 +42,14 @@
 
         function Stately(statesObject) {
 
+            //if statesObject is a function
+            if (typeof statesObject === 'function') {
+
+                //avaluate it
+                statesObject = statesObject();
+
+            }
+
             //current state of the machine
             var currentState,
 
