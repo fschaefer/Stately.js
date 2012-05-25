@@ -20,8 +20,6 @@
             InvalidStateError = (function () {
 
                 //custom event constructor
-
-
                 function InvalidStateError(message) {
 
                     //the error message
@@ -38,8 +36,6 @@
             })();
 
         //constructor
-
-
         function Stately(statesObject) {
 
             //if statesObject is a function
