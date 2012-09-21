@@ -44,24 +44,24 @@ The property names of the `statesObject` are the `states` of the machine. The at
 
 If different states use the same event identifier (function name), the `events` are chained up and the machine handles calling the correct `action` for the current state (if the `event` is handled in the current state). If the event is not handled in the current state, it is ignored.
 
-If no `action` function is required, the desired `state` can be attached to the `event` as string directly:
+If no immediate `action` needs to be declared, the desired transition `state` can be attached to the `event` as string directly:
    
     var machine = Stately.machine({
         'STATE0': {
-            event: 'STATE1'
+            'event':        /* => */ 'STATE1'
         },
         'STATE1': {
-            event: 'STATE2'
+            'event':        /* => */ 'STATE2'
         },
-        'STATE2':{
-            event: 'STATE0',
-            anotherEvent: 'STATE1'
+        'STATE2': {
+            'event':        /* => */ 'STATE0',
+            'anotherEvent': /* => */ 'STATE1'
         }
     });
 
 ### Transitions
 
-There are several ways a `action` can transition the machine into another state. The simplest form is returning the desired next state from an action. Therefore, `this` refers to the (internal) `stateStore` inside an `action` to access the other states of the machine:
+There are several ways an `action` can transition the machine into another state. The simplest form is returning the desired next state from an action. Therefore, `this` refers to the (internal) `stateStore` inside an `action` to access the other states of the machine:
 
     ...
     
@@ -151,8 +151,8 @@ Once in a while, it is useful to get a `notification` when the machine transitio
 Inside the `notification`, `this` refers to the internal `stateStore`.
 
 ### Hooks
-    ...
 
+Beside the notification system via `bind` and `unbind`, there is an alternative way to attach hooks that are triggered when the state of the machine changes. Possible hooks are `onenterSTATE` (or as shortcut `onSTATE`) and `onleaveSTATE`. Hook functions have the same signature as notifications bound with `bind`.
 
 ## Examples
 
@@ -267,3 +267,35 @@ Inside the `notification`, `this` refers to the internal `stateStore`.
     //PAUSED => PLAYING
     //PLAYING => PAUSED
     //PAUSED => STOPPED
+
+### Radio (more declarative)
+
+    var radio = Stately.machine({
+        'STOPPED': {
+            'play': /* => */ 'PLAYING'
+        },
+        'PLAYING': {
+            'stop':  /* => */ 'STOPPED',
+            'pause': /* => */ 'PAUSED'
+        },
+        'PAUSED': {
+            'play': /* => */ 'PLAYING',
+            'stop': /* => */ 'STOPPED'
+        }
+    });
+
+    radio.onleaveSTOPPED = function (event, oldState, newState) {
+        // ...
+    };
+
+    radio.onenterSTOPPED = function (event, oldState, newState) {
+        // ...
+    };
+
+    radio.onPLAYING = function (event, oldState, newState) {
+        // ...
+    };
+
+    radio.onPAUSED = function (event, oldState, newState) {
+        // ...
+    };
