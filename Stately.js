@@ -13,8 +13,9 @@
     //the state machine engine
     var Stately = (function (undefined) {
 
-        //helper to identify options type
-        var toString = Object.prototype.toString,
+        var
+            //helper to identify options type
+            toString = Object.prototype.toString,
 
             //custom exception for invalid states
             InvalidStateError = (function () {
@@ -46,11 +47,12 @@
 
             }
 
-            //current state of the machine
-            var currentState,
+            var
+                //current state of the machine
+                currentState,
 
-            //storage for notification callbacks
-            notificationStore = [],
+                //storage for notification callbacks
+                notificationStore = [],
 
                 //notify callbacks about a transition
                 notify = function () {
@@ -81,14 +83,15 @@
                     //function to transition into another state
                     setMachineState: function setMachineState(nextState) {
 
-                        //leave state hook
-                        var onLeaveState,
+                        var
+                            //leave state hook
+                            onLeaveState,
 
-                        //enter state hook
-                        onEnterState,
+                            //enter state hook
+                            onEnterState,
 
-                        //store last machine state
-                        lastState = currentState;
+                            //store last machine state
+                            lastState = currentState;
 
                         //if state machine cannot handle returned state
                         if (!nextState || !nextState.name || !stateStore[nextState.name]) {
@@ -199,18 +202,18 @@
                     //the decorator
                     return function () {
 
+                        var
+                            //before event hook
+                            onBeforeEvent,
 
-                        //before event hook
-                        var onBeforeEvent,
+                            //after event hook
+                            onAfterEvent,
 
-                        //after event hook
-                        onAfterEvent,
+                            //new state machine changed into
+                            nextState,
 
-                        //new state machine changed into
-                        nextState,
-
-                        //return the state machine if no event returns something
-                        eventValue = stateMachine;
+                            //return the state machine if no event returns something
+                            eventValue = stateMachine;
 
                         //if attached event handler doesn't handle this event
                         if (stateStore[stateName] !== currentState) {
