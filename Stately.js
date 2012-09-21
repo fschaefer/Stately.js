@@ -39,7 +39,7 @@
         function Stately(statesObject) {
 
             //if statesObject is a function
-            if (typeof statesObject === 'function') {
+            if (typeof(statesObject) === 'function') {
 
                 //avaluate it
                 statesObject = statesObject();
@@ -105,7 +105,7 @@
                             onLeaveState = stateMachine['onleave' + currentState.name];
 
                             //if a hook is attached
-                            if (onLeaveState) {
+                            if (onLeaveState && typeof(onLeaveState) === 'function') {
 
                                 //apply it
                                 onLeaveState.call(stateStore, arguments[1], lastState.name, nextState.name);
@@ -119,7 +119,7 @@
                             onEnterState = stateMachine['onenter' + currentState.name] || stateMachine['on' + currentState.name];
 
                             //if a hook is attached
-                            if (onEnterState) {
+                            if (onEnterState && typeof(onEnterState) === 'function') {
 
                                 //apply it
                                 onEnterState.call(stateStore, arguments[1], lastState.name, nextState.name);
@@ -231,7 +231,7 @@
                         onBeforeEvent = stateMachine['onbefore' + eventName];
 
                         //if a hook is attached
-                        if (onBeforeEvent) {
+                        if (onBeforeEvent && typeof(onBeforeEvent) === 'function') {
 
                             //apply it
                             onBeforeEvent.call(stateStore, eventName, currentState.name, currentState.name);
@@ -272,7 +272,7 @@
                         onAfterEvent = stateMachine['onafter' + eventName] || stateMachine['on' + eventName];
 
                         //if a hook is attached
-                        if (onAfterEvent) {
+                        if (onAfterEvent && typeof(onAfterEvent) === 'function') {
 
                             //apply it
                             onAfterEvent.call(stateStore, eventName, currentState.name, nextState.name);
