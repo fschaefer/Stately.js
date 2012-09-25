@@ -181,9 +181,6 @@
                                     //remove it
                                     notificationStore.splice(i, 1);
 
-                                    //and stop walking
-                                    break;
-
                                 }
 
                             }
