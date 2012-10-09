@@ -16,33 +16,33 @@ or the factory method:
 
     var machine = Stately.machine(statesObject);
 
-Both will return a new `stateMachine` object, with all events from all states attached to it. The machine will transition into the initial state (the first attached `stateObject`) immediately. In addition to the events the `stateMachine` object has a `getMachineState()` function, returning the current name of the machines state, and `bind()` and `unbind()` functions, to register callbacks to receive `notifications` when the machine transitions into another state.
+Both will return a new `stateMachine` object, with all events from all states attached to it. The machine will transition into the initial state (the first attached `stateObject`) immediately. In addition to the events the `stateMachine` object has a `getMachineState()` method, returning the current name of the machines state, and `bind()` and `unbind()` methods, to register callbacks to receive `notifications` when the machine transitions into another state.
 
 The `statesObject` is an object  with `stateObject` objects attached as properties.
 The property names of the `statesObject` are the `states` of the machine. The attached `stateObject` objects model the machines states with the property names as `events` and the connected functions as `actions`:
 
     var machine = Stately.machine({
         'STATE0': {
-            event: function action() {
+            event: function () {
                 ...
             }
         },
         'STATE1': {
-            event: function action() {
+            event: function () {
                 ...
             }
         },
         'STATE2':{
-            event: function action() {
+            event: function () {
                 ...
             },
-            anotherEvent: function action() {
+            anotherEvent: function () {
                 ...
             }
         }
     });
 
-If different states use the same event identifier (function name), the `events` are chained up and the machine handles calling the correct `action` for the current state (if the `event` is handled in the current state). If the event is not handled in the current state, it is ignored.
+If different states use the same event identifier, the `events` are chained up and the machine handles calling the correct `action` for the current state (if the `event` is handled in the current state). If the event is not handled in the current state, it is ignored.
 
 If no immediate `action` needs to be declared, the desired transition `state` can be attached to the `event` as string directly:
    
@@ -95,7 +95,7 @@ Sometimes it is desired to return a value from an action. In this case the retur
     
     ...
 
-For asynchronous actions there is `getMachineState()` and  `setMachineState(nextState)` accessible through the `this` reference of an action:
+For asynchronous actions there are `getMachineState()` and  `setMachineState(nextState)` accessible through the `this` reference of an action:
 
     ...
     
@@ -117,7 +117,7 @@ For asynchronous actions there is `getMachineState()` and  `setMachineState(next
     
     ...
 
-Because `this` refers to the `stateStore`, it is also possible to call an others state action (note: this won't trigger the `notification` callbacks):
+Because `this` refers to the `stateStore`, it is also possible to call an action from another state (note: this won't trigger the `notification` callbacks):
 
     ...
     
@@ -138,7 +138,7 @@ Because `this` refers to the `stateStore`, it is also possible to call an others
 
 ### Notifications
 
-Once in a while, it is useful to get a `notification` when the machine transitions into another state. Therefore the `stateMachine` object has `bind(callback)` and `unbind(callback)` to register and unregister notification handlers that get called when the states change. A notification callback has the following form: 
+Once in a while, it is useful to get a `notification` when the machine transitions into another state. Therefore the `stateMachine` object has `bind(callback)` and `unbind(callback)` to register and unregister notification handlers that get called when the state changes. A notification callback has the following form: 
 
     function notification (event, oldState, newState) {
         ...
