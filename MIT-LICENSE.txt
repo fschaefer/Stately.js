@@ -1,4 +1,4 @@
-Copyright (c) 2011 Florian Schäfer, http://github.com/fschaefer
+Copyright (c) 2012 Florian Schäfer, http://github.com/fschaefer
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the

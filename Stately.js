@@ -1,12 +1,11 @@
-/* 
+/*
  * Stately.js: A JavaScript based finite-state machine (FSM) engine.
- * 
- * Copyright (c) 2011 Florian Schäfer (florian.schaefer@gmail.com)
- * Dual licensed under the MIT (MIT_LICENSE.txt)
- * and GPL Version 2 (GPL_LICENSE.txt) licenses.
- * 
+ *
+ * Copyright (c) 2012 Florian Schäfer (florian.schaefer@gmail.com)
+ * Released under MIT license.
+ *
  * Version: 0.9.8
- * 
+ *
  */
 (function (exports) {
 
