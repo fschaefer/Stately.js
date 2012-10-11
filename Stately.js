@@ -136,6 +136,31 @@
                         //return the state store
                         return this;
 
+                    },
+
+                    //function returns the possible events in current state
+                    getMachineEvents: function getMachineEvents() {
+
+                        //storage for the events in current state
+                        var events = [];
+
+                        //walk over the events of the current state
+                        for (property in currentState) {
+
+                            //ensure to only walk over own properties
+                            if (currentState.hasOwnProperty(property)) {
+
+                                //if it is an event function
+                                if (typeof(currentState[property]) === 'function') {
+
+                                    //store it in events storage
+                                    events.push(property);
+                                }
+                            }
+                        }
+
+                        //return the possible events
+                        return events;
                     }
 
                 },
@@ -145,6 +170,9 @@
 
                     //copy function to public state machine object
                     getMachineState: stateStore.getMachineState,
+
+                    //copy function to public state machine object
+                    getMachineEvents: stateStore.getMachineEvents,
 
                     //store a new notification callback
                     bind: function (callback) {
