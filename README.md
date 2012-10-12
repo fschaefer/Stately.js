@@ -299,3 +299,6 @@ Beside the notification system via `bind` and `unbind`, there is an alternative 
     radio.onPAUSED = function (event, oldState, newState) {
         // ...
     };
+
+## jsFiddles
+* http://jsfiddle.net/2bJgM/
