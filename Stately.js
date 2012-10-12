@@ -100,45 +100,41 @@
                             throw new InvalidStateError('Stately.js: Transitioned into invalid state: `' + setMachineState.caller + '`.');
                         }
 
-                        //if state has changed
-                        if (nextState !== currentState) {
+                        //transition into next state
+                        currentState = nextState;
 
-                            //transition into next state
-                            currentState = nextState;
+                        //retrieve enter state hook
+                        onBeforeState = stateMachine['onbefore' + currentState.name];
 
-                            //retrieve enter state hook
-                            onBeforeState = stateMachine['onbefore' + currentState.name];
+                        //if a hook is attached
+                        if (onBeforeState && typeof(onBeforeState) === 'function') {
 
-                            //if a hook is attached
-                            if (onBeforeState && typeof(onBeforeState) === 'function') {
-
-                                //apply it
-                                onBeforeState.call(stateStore, eventName, lastState.name, nextState.name);
-                            }
-
-                            //retrieve enter state hook
-                            onEnterState = stateMachine['onenter' + currentState.name] || stateMachine['on' + currentState.name];
-
-                            //if a hook is attached
-                            if (onEnterState && typeof(onEnterState) === 'function') {
-
-                                //apply it
-                                onEnterState.call(stateStore, eventName, lastState.name, nextState.name);
-                            }
-
-                            //retrieve leave state hook
-                            onLeaveState = stateMachine['onleave' + currentState.name];
-
-                            //if a hook is attached
-                            if (onLeaveState && typeof(onLeaveState) === 'function') {
-
-                                //apply it
-                                onLeaveState.call(stateStore, eventName, lastState.name, nextState.name);
-                            }
-
-                            //notify notification callbacks about transition
-                            notify.call(stateStore, eventName, lastState.name, nextState.name);
+                            //apply it
+                            onBeforeState.call(stateStore, eventName, lastState.name, nextState.name);
                         }
+
+                        //retrieve enter state hook
+                        onEnterState = stateMachine['onenter' + currentState.name] || stateMachine['on' + currentState.name];
+
+                        //if a hook is attached
+                        if (onEnterState && typeof(onEnterState) === 'function') {
+
+                            //apply it
+                            onEnterState.call(stateStore, eventName, lastState.name, nextState.name);
+                        }
+
+                        //retrieve leave state hook
+                        onLeaveState = stateMachine['onleave' + currentState.name];
+
+                        //if a hook is attached
+                        if (onLeaveState && typeof(onLeaveState) === 'function') {
+
+                            //apply it
+                            onLeaveState.call(stateStore, eventName, lastState.name, nextState.name);
+                        }
+
+                        //notify notification callbacks about transition
+                        notify.call(stateStore, eventName, lastState.name, nextState.name);
 
                         //return the state store
                         return this;
