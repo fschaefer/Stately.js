@@ -160,25 +160,15 @@ Beside the notification system via `bind` and `unbind`, there is an alternative 
 
     var door = Stately.machine({
         'OPEN': {
-            close: function () {
-                return this.CLOSED;
-            }
+            'close':  /* => */ 'CLOSED'
         },
         'CLOSED': {
-            open: function () {
-                return this.OPEN;
-            },
-            lock: function () {
-                return this.LOCKED;
-            }
+            'open':   /* => */ 'OPEN',
+            'lock':   /* => */ 'LOCKED'
         },
         'LOCKED': {
-            unlock: function () {
-                return this.CLOSED;
-            },
-            break: function () {
-                return this.BROKEN;
-            }
+            'unlock': /* => */ 'CLOSED',
+            'break':  /* => */ 'BROKEN'
         },
         'BROKEN': {
             fix: function () {
