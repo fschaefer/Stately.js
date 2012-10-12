@@ -24,7 +24,6 @@
 
                     //the error message
                     this.message = message;
-
                 }
 
                 //inherit from error object
@@ -32,7 +31,6 @@
 
                 //return custom event
                 return InvalidStateError;
-
             })();
 
         //constructor
@@ -43,7 +41,6 @@
 
                 //avaluate it
                 statesObject = statesObject();
-
             }
 
             var
@@ -64,7 +61,6 @@
 
                         //and notify them
                         notifications[i].apply(this, arguments);
-
                     }
                 },
 
@@ -76,18 +72,23 @@
 
                         //return current state as string
                         return currentState.name;
-
                     },
 
                     //function to transition into another state
-                    setMachineState: function setMachineState(nextState) {
+                    setMachineState: function setMachineState(nextState /*, eventName */) {
 
                         var
-                            //leave state hook
-                            onLeaveState,
+                            //event that triggered the transition
+                            eventName = arguments[1],
+
+                            //before state hook
+                            onBeforeState,
 
                             //enter state hook
                             onEnterState,
+
+                            //leave state hook
+                            onLeaveState,
 
                             //store last machine state
                             lastState = currentState;
@@ -97,25 +98,23 @@
 
                             //throw invalid state exception
                             throw new InvalidStateError('Stately.js: Transitioned into invalid state: `' + setMachineState.caller + '`.');
-
                         }
 
                         //if state has changed
                         if (nextState !== currentState) {
 
-                            //retrieve leave state hook
-                            onLeaveState = stateMachine['onleave' + currentState.name];
-
-                            //if a hook is attached
-                            if (onLeaveState && typeof(onLeaveState) === 'function') {
-
-                                //apply it
-                                onLeaveState.call(stateStore, arguments[1], lastState.name, nextState.name);
-
-                            }
-
                             //transition into next state
                             currentState = nextState;
+
+                            //retrieve enter state hook
+                            onBeforeState = stateMachine['onbefore' + currentState.name];
+
+                            //if a hook is attached
+                            if (onBeforeState && typeof(onBeforeState) === 'function') {
+
+                                //apply it
+                                onBeforeState.call(stateStore, eventName, lastState.name, nextState.name);
+                            }
 
                             //retrieve enter state hook
                             onEnterState = stateMachine['onenter' + currentState.name] || stateMachine['on' + currentState.name];
@@ -124,18 +123,25 @@
                             if (onEnterState && typeof(onEnterState) === 'function') {
 
                                 //apply it
-                                onEnterState.call(stateStore, arguments[1], lastState.name, nextState.name);
+                                onEnterState.call(stateStore, eventName, lastState.name, nextState.name);
+                            }
 
+                            //retrieve leave state hook
+                            onLeaveState = stateMachine['onleave' + currentState.name];
+
+                            //if a hook is attached
+                            if (onLeaveState && typeof(onLeaveState) === 'function') {
+
+                                //apply it
+                                onLeaveState.call(stateStore, eventName, lastState.name, nextState.name);
                             }
 
                             //notify notification callbacks about transition
-                            notify.call(stateStore, arguments[1], lastState.name, nextState.name);
-
+                            notify.call(stateStore, eventName, lastState.name, nextState.name);
                         }
 
                         //return the state store
                         return this;
-
                     },
 
                     //function returns the possible events in current state
@@ -207,17 +213,13 @@
 
                                     //remove it
                                     notificationStore.splice(i, 1);
-
                                 }
-
                             }
-
                         }
 
                         //return the state machine
                         return this;
                     }
-
                 },
 
                 //event decorator factory function
@@ -251,7 +253,6 @@
 
                             //or return value of action
                             return eventValue;
-
                         }
 
                         //retrieve before event hook
@@ -262,7 +263,6 @@
 
                             //apply it
                             onBeforeEvent.call(stateStore, eventName, currentState.name, currentState.name);
-
                         }
 
                         //run action
@@ -292,7 +292,6 @@
 
                             //second element is return value
                             eventValue = eventValue[1];
-
                         }
 
                         //retrieve after event hook
@@ -303,7 +302,6 @@
 
                             //apply it
                             onAfterEvent.call(stateStore, eventName, currentState.name, nextState.name);
-
                         }
 
                         //transition into next state
@@ -311,9 +309,7 @@
 
                         //return desired value
                         return eventValue;
-
                     };
-
                 };
 
             //walk over states object
@@ -342,7 +338,6 @@
 
                                         //returning the given state
                                         return this[stateName];
-
                                     };
 
                                 })(stateStore[stateName][eventName]);
@@ -353,11 +348,8 @@
 
                                 //assign decorated events to state machine
                                 stateMachine[eventName] = transition(stateName, eventName, stateMachine[eventName]);
-
                             }
-
                         }
-
                     }
 
                     //attach states name to object in storage
@@ -368,11 +360,8 @@
 
                         //make initial state the current state
                         currentState = stateStore[stateName];
-
                     }
-
                 }
-
             }
 
             //if there is no initial state
@@ -380,16 +369,14 @@
 
                 //throw invalid state exception
                 throw new InvalidStateError('Stately.js: Invalid initial state.');
-
             }
 
             //return the new state machine
             return stateMachine;
-
         }
 
         //a factory for new machines
-        Stately.machine = function (statesObject) {
+        Stately.machine = function machine(statesObject) {
             return new Stately(statesObject);
         };
 
@@ -398,7 +385,6 @@
 
         //return the constructor
         return Stately;
-
     })();
 
     //export Stately object
