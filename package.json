@@ -11,5 +11,5 @@
   "devDependencies": { },
   "engine": "node >= 0.4.1",
   "main": "Stately.js",
-  "version" : "1.0.0"
+  "version" : "0.9.8"
 }
