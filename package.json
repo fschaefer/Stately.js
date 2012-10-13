@@ -1,0 +1,15 @@
+{
+  "name": "Stately.js",
+  "description": "A JavaScript based finite-state machine (FSM) engine.",
+  "homepage" : "https://github.com/fschaefer/Stately.js",
+  "author": "Florian Schäfer",
+  "repository" : {
+      "type": "git",
+      "url": "git://github.com/fschaefer/Stately.js.git"
+  },
+  "dependencies": { },
+  "devDependencies": { },
+  "engine": "node >= 0.4.1",
+  "main": "Stately.js",
+  "version" : "1.0.0"
+}
