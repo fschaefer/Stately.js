@@ -171,14 +171,14 @@ Beside the notification system via `bind` and `unbind`, there is an alternative 
             'break':  /* => */ 'BROKEN'
         },
         'BROKEN': {
-            fix: function () {
+            'fix': function () {
                 this.fixed = (this.fixed === undefined ? 1 : ++this.fixed);
                 return this.fixed < 3 ? this.OPEN : this.BROKEN;
             }
         }
     });
     
-    //the initial state of the door is open(it's the first state object)
+    //the initial state of the door is open (it's the first state object)
     console.log(door.getMachineState() === 'OPEN');        // true;
     
     //close and lock the door
@@ -189,7 +189,7 @@ Beside the notification system via `bind` and `unbind`, there is an alternative 
     door.open();
     console.log(door.getMachineState() === 'OPEN');        // false;
     
-    //unlock, open, lock(is ignored because it fails), close, and lock
+    //unlock, open, lock (is ignored because it fails), close, and lock
     door.unlock().open().lock().close().lock();
     console.log(door.getMachineState() === 'LOCKED');      // true;
     
