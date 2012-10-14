@@ -18,7 +18,7 @@
 })(this, function () {
 
     //the state machine engine
-    var Stately = (function (undefined) {
+    var Stately = (function () {
 
         var
             //helper to identify options type
@@ -49,6 +49,13 @@
 
                 //avaluate it
                 statesObject = statesObject();
+            }
+
+            //if no valid statesObject provided
+            if (toString.call(statesObject) !== '[object Object]') {
+
+                //bail out
+                throw new InvalidStateError('Stately.js: Invalid states object: `' + statesObject + '`.');
             }
 
             var
@@ -273,7 +280,7 @@
                         eventValue = stateStore[stateName][eventName].apply(stateStore, arguments);
 
                         //check return value of action
-                        if (eventValue === undefined) {
+                        if (typeof(eventValue) === 'undefined') {
 
                             //nothing returned, stay in current state
                             nextState = currentState;
