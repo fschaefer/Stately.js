@@ -7,7 +7,15 @@
  * Version: 0.9.8
  *
  */
-(function (exports) {
+(function (root, factory) {
+    if (typeof(exports) === 'object') {
+        module.exports = factory();
+    } else if (typeof(define) === 'function' && define.amd) {
+        define(factory);
+    } else {
+        root.Stately = factory();
+    }
+})(this, function () {
 
     //the state machine engine
     var Stately = (function (undefined) {
@@ -384,6 +392,6 @@
     })();
 
     //export Stately object
-    exports.Stately = Stately;
+    return Stately;
 
-})(this);
+});
