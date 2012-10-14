@@ -2,7 +2,7 @@
 
 ## What is it?
 
-Stately.js is a JavaScript based finite-state machine (FSM) or finite-state automaton engine inspired by phred's [stately](http://github.com/phred/stately).
+Stately.js is a JavaScript based finite-state machine (FSM) engine for Node.js and the Browser.
 
 ## Usage
 
