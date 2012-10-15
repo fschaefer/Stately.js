@@ -8,9 +8,9 @@
  *
  */
 (function (root, factory) {
-    if (typeof(exports) === 'object') {
+    if (typeof exports === 'object') {
         module.exports = factory();
-    } else if (typeof(define) === 'function' && define.amd) {
+    } else if (typeof define === 'function' && define.amd) {
         define(factory);
     } else {
         root.Stately = factory();
@@ -45,7 +45,7 @@
         function Stately(statesObject) {
 
             //if statesObject is a function
-            if (typeof(statesObject) === 'function') {
+            if (typeof statesObject === 'function') {
 
                 //avaluate it
                 statesObject = statesObject();
@@ -122,7 +122,7 @@
                         onBeforeState = stateMachine['onbefore' + currentState.name];
 
                         //if a hook is attached
-                        if (onBeforeState && typeof(onBeforeState) === 'function') {
+                        if (onBeforeState && typeof onBeforeState === 'function') {
 
                             //apply it
                             onBeforeState.call(stateStore, eventName, lastState.name, nextState.name);
@@ -132,7 +132,7 @@
                         onEnterState = stateMachine['onenter' + currentState.name] || stateMachine['on' + currentState.name];
 
                         //if a hook is attached
-                        if (onEnterState && typeof(onEnterState) === 'function') {
+                        if (onEnterState && typeof onEnterState === 'function') {
 
                             //apply it
                             onEnterState.call(stateStore, eventName, lastState.name, nextState.name);
@@ -142,7 +142,7 @@
                         onLeaveState = stateMachine['onleave' + currentState.name];
 
                         //if a hook is attached
-                        if (onLeaveState && typeof(onLeaveState) === 'function') {
+                        if (onLeaveState && typeof onLeaveState === 'function') {
 
                             //apply it
                             onLeaveState.call(stateStore, eventName, lastState.name, nextState.name);
@@ -168,7 +168,7 @@
                             if (currentState.hasOwnProperty(property)) {
 
                                 //if it is an event function
-                                if (typeof(currentState[property]) === 'function') {
+                                if (typeof currentState[property] === 'function') {
 
                                     //store it in events storage
                                     events.push(property);
@@ -270,7 +270,7 @@
                         onBeforeEvent = stateMachine['onbefore' + eventName];
 
                         //if a hook is attached
-                        if (onBeforeEvent && typeof(onBeforeEvent) === 'function') {
+                        if (onBeforeEvent && typeof onBeforeEvent === 'function') {
 
                             //apply it
                             onBeforeEvent.call(stateStore, eventName, currentState.name, currentState.name);
@@ -280,7 +280,7 @@
                         eventValue = stateStore[stateName][eventName].apply(stateStore, arguments);
 
                         //check return value of action
-                        if (typeof(eventValue) === 'undefined') {
+                        if (typeof eventValue === 'undefined') {
 
                             //nothing returned, stay in current state
                             nextState = currentState;
@@ -309,7 +309,7 @@
                         onAfterEvent = stateMachine['onafter' + eventName] || stateMachine['on' + eventName];
 
                         //if a hook is attached
-                        if (onAfterEvent && typeof(onAfterEvent) === 'function') {
+                        if (onAfterEvent && typeof onAfterEvent === 'function') {
 
                             //apply it
                             onAfterEvent.call(stateStore, eventName, currentState.name, nextState.name);
@@ -339,7 +339,7 @@
                         if (stateStore[stateName].hasOwnProperty(eventName)) {
 
                             //if type is a string, assume it is a state
-                            if (typeof(stateStore[stateName][eventName]) === 'string') {
+                            if (typeof stateStore[stateName][eventName] === 'string') {
 
                                 //decorate it
                                 stateStore[stateName][eventName] = (function (stateName) {
@@ -355,7 +355,7 @@
                             }
 
                             //if type function
-                            if (typeof(stateStore[stateName][eventName]) === 'function') {
+                            if (typeof stateStore[stateName][eventName] === 'function') {
 
                                 //assign decorated events to state machine
                                 stateMachine[eventName] = transition(stateName, eventName, stateMachine[eventName]);
