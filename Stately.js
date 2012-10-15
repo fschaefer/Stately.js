@@ -339,7 +339,7 @@
                         if (stateStore[stateName].hasOwnProperty(eventName)) {
 
                             //if type is a string, assume it is a state
-                            if (toString.call(stateStore[stateName][eventName]) === '[object String]') {
+                            if (typeof(stateStore[stateName][eventName]) === 'string') {
 
                                 //decorate it
                                 stateStore[stateName][eventName] = (function (stateName) {
@@ -355,7 +355,7 @@
                             }
 
                             //if type function
-                            if (toString.call(stateStore[stateName][eventName]) === '[object Function]') {
+                            if (typeof(stateStore[stateName][eventName]) === 'function') {
 
                                 //assign decorated events to state machine
                                 stateMachine[eventName] = transition(stateName, eventName, stateMachine[eventName]);
