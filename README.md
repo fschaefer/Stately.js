@@ -1,8 +1,10 @@
-![Stately.js Logo](https://github.com/fschaefer/Stately.js/raw/master/misc/Stately.js.png)
+![Stately.js 
+Logo](https://github.com/fschaefer/Stately.js/raw/master/misc/Stately.js.png)
 
 ## What is it?
 
-Stately.js is a JavaScript based finite-state machine (FSM) engine for Node.js and the Browser.
+Stately.js is a JavaScript based finite-state machine (FSM) engine for Node.js 
+and the Browser.
 
 ## Usage
 
@@ -16,10 +18,19 @@ or the factory method:
 
     var machine = Stately.machine(statesObject);
 
-Both will return a new `stateMachine` object, with all events from all states attached to it. The machine will transition into the initial state (the first attached `stateObject`) immediately. In addition to the events the `stateMachine` object has a `getMachineState()` method, returning the current name of the machines state, and `bind()` and `unbind()` methods, to register callbacks to receive `notifications` when the machine transitions into another state.
+Both will return a new `stateMachine` object, with all events from all states 
+attached to it. The machine will transition into the initial state (the first 
+attached `stateObject`) immediately. In addition to the events the 
+`stateMachine` object has a `getMachineState()` method, returning the current 
+name of the machines state, `getMachineEvents()`, returning possible events in 
+the current state, and `bind()` and `unbind()` methods, to register callbacks 
+to receive `notifications` when the machine transitions into another state.
 
-The `statesObject` is an object  with `stateObject` objects attached as properties.
-The property names of the `statesObject` are the `states` of the machine. The attached `stateObject` objects model the machines states with the property names as `events` and the connected functions as `actions`:
+The `statesObject` is an object  with `stateObject` objects attached as 
+properties.
+The property names of the `statesObject` are the `states` of the machine.
+The attached `stateObject` objects model the machines states with the property 
+names as `events` and the connected functions as `actions`:
 
     var machine = Stately.machine({
         'STATE0': {
@@ -42,9 +53,13 @@ The property names of the `statesObject` are the `states` of the machine. The at
         }
     });
 
-If different states use the same event identifier, the `events` are chained up and the machine handles calling the correct `action` for the current state (if the `event` is handled in the current state). If the event is not handled in the current state, it is ignored.
+If different states use the same event identifier, the `events` are chained up 
+and the machine handles calling the correct `action` for the current state (if 
+the `event` is handled in the current state). If the event is not handled in 
+the current state, it is ignored.
 
-If no immediate `action` needs to be declared, the desired transition `state` can be attached to the `event` as string directly:
+If no immediate `action` needs to be declared, the desired transition `state` 
+can be attached to the `event` as string directly:
    
     var machine = Stately.machine({
         'STATE0': {
@@ -61,7 +76,10 @@ If no immediate `action` needs to be declared, the desired transition `state` ca
 
 ### Transitions
 
-There are several ways an `action` can transition the machine into another state. The simplest form is returning the desired next state from an action. Therefore, `this` refers to the (internal) `stateStore` inside an `action` to access the other states of the machine:
+There are several ways an `action` can transition the machine into another 
+state. The simplest form is returning the desired next state from an action. 
+Therefore, `this` refers to the (internal) `stateStore` inside an `action` to 
+access the other states of the machine:
 
     ...
     
@@ -77,9 +95,13 @@ There are several ways an `action` can transition the machine into another state
     
     ...
 
-If an action should not transition the machine into another state, just omit the return value (or return the current state).
+If an action should not transition the machine into another state, just omit 
+the return value (or return the current state).
 
-Sometimes it is desired to return a value from an action. In this case the return value must be an array with two elements. The first element is the next state the machine should transition into, and the second element the return value:
+Sometimes it is desired to return a value from an action. In this case the 
+return value must be an array with two elements. The first element is the next 
+state the machine should transition into, and the second element the return 
+value:
 
     ...
     
@@ -95,7 +117,9 @@ Sometimes it is desired to return a value from an action. In this case the retur
     
     ...
 
-For asynchronous actions there are `getMachineState()` and  `setMachineState(nextState)` accessible through the `this` reference of an action:
+For asynchronous actions there are `getMachineState()` and  
+`setMachineState(nextState)` accessible through the `this` reference of an 
+action:
 
     ...
     
@@ -117,7 +141,9 @@ For asynchronous actions there are `getMachineState()` and  `setMachineState(nex
     
     ...
 
-Because `this` refers to the `stateStore`, it is also possible to call an action from another state (note: this won't trigger the `notification` callbacks):
+Because `this` refers to the `stateStore`, it is also possible to call an 
+action from another state (note: this won't trigger the `notification` 
+callbacks):
 
     ...
     
@@ -138,7 +164,11 @@ Because `this` refers to the `stateStore`, it is also possible to call an action
 
 ### Notifications
 
-Once in a while, it is useful to get a `notification` when the machine transitions into another state. Therefore the `stateMachine` object has `bind(callback)` and `unbind(callback)` to register and unregister notification handlers that get called when the state changes. A notification callback has the following form: 
+Once in a while, it is useful to get a `notification` when the machine 
+transitions into another state. Therefore the `stateMachine` object has 
+`bind(callback)` and `unbind(callback)` to register and unregister notification 
+handlers that get called when the state changes. A notification callback has 
+the following form: 
 
     function notification (event, oldState, newState) {
         ...
@@ -152,7 +182,12 @@ Inside the `notification`, `this` refers to the internal `stateStore`.
 
 ### Hooks
 
-Beside the notification system via `bind` and `unbind`, there is an alternative way to attach hooks that are triggered when the state of the machine changes. Possible hooks are `onbeforeSTATE`, `onenterSTATE` (or as shortcut `onSTATE`) and `onleaveSTATE` for states and `onbeforeEVENT` and `onafterEVENT` for events. Hook functions have the same signature as notifications bound with `bind`.
+Beside the notification system via `bind` and `unbind`, there is an alternative 
+way to attach hooks that are triggered when the state of the machine changes. 
+Possible hooks are `onbeforeSTATE`, `onenterSTATE` (or as shortcut `onSTATE`) 
+and `onleaveSTATE` for states and `onbeforeEVENT` and `onafterEVENT` for 
+events. Hook functions have the same signature as notifications bound with 
+`bind`.
 
 ## Examples
 
