@@ -192,7 +192,7 @@
                     getMachineEvents: stateStore.getMachineEvents,
 
                     //store a new notification callback
-                    bind: function (callback) {
+                    bind: function bind(callback) {
 
                         //if we have a new notification callback
                         if (callback) {
@@ -206,7 +206,7 @@
                     },
 
                     //remove a notification callback from storage
-                    unbind: function (callback) {
+                    unbind: function unbind(callback) {
 
                         //if no callback is given
                         if (!callback) {
@@ -237,7 +237,7 @@
                 transition = function transition(stateName, eventName, nextEvent) {
 
                     //the decorator
-                    return function () {
+                    return function event() {
 
                         var
                             //before event hook
@@ -345,7 +345,7 @@
                                 stateStore[stateName][eventName] = (function (stateName) {
 
                                     //with a function
-                                    return function () {
+                                    return function event() {
 
                                         //returning the given state
                                         return this[stateName];
