@@ -27,12 +27,18 @@
             //custom event constructor
             function InvalidStateError(message) {
 
+                //set error name
+                this.name = 'InvalidStateError';
+
                 //the error message
                 this.message = message;
             }
 
             //inherit from error object
             InvalidStateError.prototype = new Error();
+
+            //set custom error constructor
+            InvalidStateError.prototype.constructor = InvalidStateError;
 
             //return custom event
             return InvalidStateError;
