@@ -4,7 +4,7 @@ Logo](https://github.com/fschaefer/Stately.js/raw/master/misc/Stately.js.png)
 ## What is it?
 
 Stately.js is a JavaScript based finite-state machine (FSM) engine for Node.js 
-and the Browser.
+and the browser.
 
 ## Usage
 
