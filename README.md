@@ -1,5 +1,4 @@
-![Stately.js 
-Logo](https://github.com/fschaefer/Stately.js/raw/master/misc/Stately.js.png)
+![Stately.js Logo](https://github.com/fschaefer/Stately.js/raw/master/misc/Stately.js.png)
 
 ## What is it?
 
