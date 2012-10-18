@@ -8,11 +8,11 @@
         "url": "git://github.com/fschaefer/Stately.js.git"
     },
     "keywords": [
+        "automata",
         "finite",
-        "state",
-        "machine",
         "fsm",
-        "automata"
+        "machine",
+        "state"
     ],
     "bugs": {
         "email": "florian.schaefer+Stately.js@gmail.com",
