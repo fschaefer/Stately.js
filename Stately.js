@@ -8,10 +8,10 @@
  *
  */
 (function (root, factory) {
-    if (typeof exports === 'object') {
-        module.exports = factory();
-    } else if (typeof define === 'function' && define.amd) {
-        define(factory);
+    if (typeof root.module === 'object' && root.module.exports) {
+        root.module.exports = factory();
+    } else if (typeof root.define === 'function' && root.define.amd) {
+        root.define(factory);
     } else {
         root.Stately = factory();
     }
