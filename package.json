@@ -7,6 +7,17 @@
         "type": "git",
         "url": "git://github.com/fschaefer/Stately.js.git"
     },
+    "keywords": [
+        "finite",
+        "state",
+        "machine",
+        "fsm",
+        "automata"
+    ],
+    "bugs": {
+        "email": "florian.schaefer+Stately.js@gmail.com",
+        "url": "https://github.com/fschaefer/Stately.js/issues"
+    },
     "dependencies": {},
     "devDependencies": {},
     "contributors": [
