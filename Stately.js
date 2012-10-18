@@ -165,7 +165,7 @@
                     var events = [];
 
                     //walk over the events of the current state
-                    for (property in currentState) {
+                    for (var property in currentState) {
 
                         //ensure to only walk over own properties
                         if (currentState.hasOwnProperty(property)) {
