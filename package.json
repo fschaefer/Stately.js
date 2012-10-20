@@ -28,5 +28,5 @@
     ],
     "engine": "node >= 0.8.0",
     "main": "Stately.js",
-    "version": "0.9.8"
+    "version": "1.0.0"
 }

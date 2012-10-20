@@ -4,7 +4,7 @@
  * Copyright (c) 2012 Florian Schäfer (florian.schaefer@gmail.com)
  * Released under MIT license.
  *
- * Version: 0.9.8
+ * Version: 1.0.0
  *
  */
 (function (root, factory) {
