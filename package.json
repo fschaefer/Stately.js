@@ -24,6 +24,11 @@
         {
             "name": "Rowan Udell",
             "web": "https://github.com/rowanu"
+        },
+        {
+            "name": "Cory Watson",
+            "email": "cory.andrew.1988@gmail.com",
+            "web": "https://github.com/coryandrew1988"
         }
     ],
     "engine": "node >= 0.8.0",
