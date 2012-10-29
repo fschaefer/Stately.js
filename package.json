@@ -1,5 +1,5 @@
 {
-    "name": "Stately.js",
+    "name": "stately.js",
     "description": "Stately.js is a JavaScript based finite-state machine (FSM) engine for Node.js and the browser.",
     "homepage": "https://github.com/fschaefer/Stately.js",
     "author": "Florian Schäfer",
