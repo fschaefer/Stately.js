@@ -7,9 +7,29 @@ and the browser.
 
 ## Installation
 
-You can use Stately in Node.js by installing with `npm`:
+In Node.js you can install Stately.js with `npm`:
 
     $ npm install stately.js
+
+and include it to your project by:
+
+    var Stately = require('Stately');
+
+In browsers you can include it directly by adding it to the document head section:
+
+    <script type="text/javascript" src="https://raw.github.com/fschaefer/Stately.js/master/Stately.js"></script>
+    <script type="text/javascript">
+        // use Stately
+    </script>
+
+or with Asynchronous Module Definition by e.g.:
+
+    <script type="text/javascript" src="https://raw.github.com/jrburke/requirejs/master/require.js"></script>
+    <script type="text/javascript">
+    require(['https://raw.github.com/fschaefer/Stately.js/master/Stately.js'], function (Stately) {
+        // use Stately
+    });
+    </script>
 
 ## Usage
 
