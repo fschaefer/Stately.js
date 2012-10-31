@@ -5,6 +5,12 @@
 Stately.js is a JavaScript based finite-state machine (FSM) engine for Node.js 
 and the browser.
 
+## Installation
+
+You can use Stately in Node.js by installing with `npm`:
+
+    $ npm install stately.js
+
 ## Usage
 
 ### Creating a new machine
