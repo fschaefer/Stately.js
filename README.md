@@ -13,7 +13,7 @@ In Node.js you can install Stately.js with `npm`:
 
 and include it to your project by:
 
-    var Stately = require('Stately');
+    var Stately = require('stately.js');
 
 In browsers you can include it directly by adding it to the document head section:
 
