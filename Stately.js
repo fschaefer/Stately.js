@@ -104,7 +104,7 @@
                         onEnterState.call(stateStore, eventName, lastState.name, nextState.name);
                     }
 
-                    onLeaveState = stateMachine['onleave' + currentState.name];
+                    onLeaveState = stateMachine['onleave' + lastState.name];
 
                     if (onLeaveState && typeof onLeaveState === 'function') {
 
