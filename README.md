@@ -37,19 +37,19 @@ or with Asynchronous Module Definition by e.g.:
 
 A new state machine can be created with either the new operator:
 
-    var machine = new Stately(statesObject);
+    var machine = new Stately(statesObject, initialStateName);
 
 or the factory method:
 
-    var machine = Stately.machine(statesObject);
+    var machine = Stately.machine(statesObject, initialStateName);
 
 Both will return a new `stateMachine` object, with all events from all states 
-attached to it. The machine will transition into the initial state (the first 
-attached `stateObject`) immediately. In addition to the events the 
-`stateMachine` object has a `getMachineState()` method, returning the current 
-name of the machines state, `getMachineEvents()`, returning possible events in 
-the current state, and `bind()` and `unbind()` methods, to register callbacks 
-to receive `notifications` when the machine transitions into another state.
+attached to it. The machine will transition into the initial state `initialStateName` 
+ or the first attached `stateObject` if `initialStateName` is omitted. In addition 
+to the events the `stateMachine` object has a `getMachineState()` method, returning 
+the current name of the machines state, `getMachineEvents()`, returning possible 
+events in the current state, and `bind()` and `unbind()` methods, to register 
+callbacks to receive `notifications` when the machine transitions into another state.
 
 The `statesObject` is an object  with `stateObject` objects attached as 
 properties.
