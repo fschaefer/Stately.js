@@ -4,7 +4,7 @@
  * Copyright (c) 2012 Florian Schäfer (florian.schaefer@gmail.com)
  * Released under MIT license.
  *
- * Version: 1.0.0
+ * Version: 1.0.1
  *
  */
 (function (root, factory) {
@@ -36,7 +36,7 @@
             return InvalidStateError;
         })();
 
-    function Stately(statesObject) {
+    function Stately(statesObject, initialStateName) {
 
         if (typeof statesObject === 'function') {
 
@@ -275,6 +275,10 @@
             }
         }
 
+        if (stateStore[initialStateName]) {
+            currentState = stateStore[initialStateName];
+        }
+
         if (!currentState) {
 
             throw new InvalidStateError('Stately.js: Invalid initial state.');
@@ -283,8 +287,8 @@
         return stateMachine;
     }
 
-    Stately.machine = function machine(statesObject) {
-        return new Stately(statesObject);
+    Stately.machine = function machine(statesObject, initialStateName) {
+        return new Stately(statesObject, initialStateName);
     };
 
     Stately.InvalidStateError = InvalidStateError;
