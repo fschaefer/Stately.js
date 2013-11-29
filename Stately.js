@@ -275,7 +275,7 @@
             }
         }
 
-        if (stateStore[initialStateName]) {
+        if (typeof stateStore[initialStateName] !== 'undefined') {
             currentState = stateStore[initialStateName];
         }
 
