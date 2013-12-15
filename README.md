@@ -351,4 +351,4 @@ events. Hook functions have the same signature as notifications bound with
     };
 
 ## jsFiddles
-* http://jsfiddle.net/2bJgM/
+* http://jsfiddle.net/sz2hG/
