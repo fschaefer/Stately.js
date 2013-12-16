@@ -87,7 +87,7 @@ var test = {
             }
         },
         {
-            name: 'Notifications.',
+            name: '__enter and __leave__.',
             method: function () {
 
                 var transitionedEvent = false,
@@ -98,89 +98,35 @@ var test = {
                     'OPEN': {
                         close: function () {
                             return this.CLOSED;
+                        },
+                        __leave__: function (event, oldstate, newstate) {
+                            transitionedEvent = event;
+                            transitionedOldstate = oldstate;
+                            transitionedNewstate = newstate;
                         }
                     },
                     'CLOSED': {
-                        open: function () {
-                            return this.OPEN;
-                        }
-                    }
-                }),
-
-                notification = function (event, oldstate, newstate) {
-
-                    transitionedEvent = event;
-                    transitionedOldstate = oldstate;
-                    transitionedNewstate = newstate;
-
-                };
-
-                door.bind(notification);
-
-                this.assert(door.close().getMachineState() === 'CLOSED', 'Transition into a new state.');
-                this.assert(transitionedEvent === 'close', 'Report correct event');
-                this.assert(transitionedOldstate === 'OPEN', 'Report initial state.');
-                this.assert(transitionedNewstate === 'CLOSED', 'Report target state.');
-
-                door.unbind(notification);
-
-                this.assert(door.open().getMachineState() === 'OPEN', 'Transition into a new state.');
-                this.assert(transitionedEvent === 'close', 'Report correct event');
-                this.assert(transitionedOldstate === 'OPEN', 'Report initial state.');
-                this.assert(transitionedNewstate === 'CLOSED', 'Report target state.');
-
-            }
-        },
-        {
-            name: 'Hooks.',
-            method: function () {
-
-                var onbeforeclose,
-                onclose,
-                onleaveCLOSED,
-                onenterCLOSED,
-                onOPEN,
-
-                door = Stately.machine({
-                    'OPEN': {
-                        close: function () {
-                            return this.CLOSED;
-                        }
-                    },
-                    'CLOSED': {
+                        __enter__: function (event, oldstate, newstate) {
+                            transitionedEvent = event;
+                            transitionedOldstate = oldstate;
+                            transitionedNewstate = newstate;
+                        },
                         open: function () {
                             return this.OPEN;
                         }
                     }
                 });
 
-                door.onbeforeclose = function () {
-                    onbeforeclose = true;
-                }
-
-                door.onclose = function () {
-                    onclose = true;
-                }
-
-                door.onleaveCLOSED = function () {
-                    onleaveCLOSED = true;
-                }
-
-                door.onenterCLOSED = function () {
-                    onenterCLOSED = true;
-                }
-
-                door.onOPEN = function () {
-                    onOPEN = true;
-                }
-
                 this.assert(door.close().getMachineState() === 'CLOSED', 'Transition into a new state.');
+                this.assert(transitionedEvent === 'close', 'Report correct event');
+                this.assert(transitionedOldstate === 'OPEN', 'Report initial state.');
+                this.assert(transitionedNewstate === 'CLOSED', 'Report target state.');
+
                 this.assert(door.open().getMachineState() === 'OPEN', 'Transition into a new state.');
-                this.assert(onbeforeclose === true, 'Report correct event 1');
-                this.assert(onclose === true, 'Report correct event 2');
-                this.assert(onleaveCLOSED === true, 'Report correct event 3');
-                this.assert(onenterCLOSED === true, 'Report correct event 4');
-                this.assert(onOPEN === true, 'Report correct event 6');
+                this.assert(transitionedEvent === 'close', 'Report correct event');
+                this.assert(transitionedOldstate === 'OPEN', 'Report initial state.');
+                this.assert(transitionedNewstate === 'CLOSED', 'Report target state.');
+
             }
         },
         {

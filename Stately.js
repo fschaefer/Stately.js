@@ -51,18 +51,6 @@
         var
             currentState,
 
-            notificationStore = [],
-
-            notify = function () {
-
-                var notifications = notificationStore.slice();
-
-                for (var i = 0, l = notifications.length; i < l; i++) {
-
-                    notifications[i].apply(this, arguments);
-                }
-            },
-
             stateStore = {
 
                 getMachineState: function getMachineState() {
@@ -75,12 +63,6 @@
                     var
                         eventName = arguments[1],
 
-                        onBeforeState,
-
-                        onEnterState,
-
-                        onLeaveState,
-
                         lastState = currentState;
 
                     if (!nextState || !nextState.name || !stateStore[nextState.name]) {
@@ -88,30 +70,17 @@
                         throw new InvalidStateError('Stately.js: Transitioned into invalid state: `' + setMachineState.caller + '`.');
                     }
 
+                    if (typeof currentState.__leave__ === 'function') {
+
+                        currentState.__leave__.call(stateStore, eventName, lastState.name, nextState.name);
+                    }
+
                     currentState = nextState;
 
-                    onBeforeState = stateMachine['onbefore' + currentState.name];
+                    if (typeof currentState.__enter__ === 'function') {
 
-                    if (onBeforeState && typeof onBeforeState === 'function') {
-
-                        onBeforeState.call(stateStore, eventName, lastState.name, nextState.name);
+                        currentState.__enter__.call(stateStore, eventName, lastState.name, nextState.name);
                     }
-
-                    onEnterState = stateMachine['onenter' + currentState.name] || stateMachine['on' + currentState.name];
-
-                    if (onEnterState && typeof onEnterState === 'function') {
-
-                        onEnterState.call(stateStore, eventName, lastState.name, nextState.name);
-                    }
-
-                    onLeaveState = stateMachine['onleave' + lastState.name];
-
-                    if (onLeaveState && typeof onLeaveState === 'function') {
-
-                        onLeaveState.call(stateStore, eventName, lastState.name, nextState.name);
-                    }
-
-                    notify.call(stateStore, eventName, lastState.name, nextState.name);
 
                     return this;
                 },
@@ -142,35 +111,6 @@
 
                 getMachineEvents: stateStore.getMachineEvents,
 
-                bind: function bind(callback) {
-
-                    if (callback) {
-
-                        notificationStore.push(callback);
-                    }
-
-                    return this;
-                },
-
-                unbind: function unbind(callback) {
-
-                    if (!callback) {
-
-                        notificationStore = [];
-
-                    } else {
-
-                        for (var i = 0, l = notificationStore.length; i < l; i++) {
-
-                            if (notificationStore[i] === callback) {
-
-                                notificationStore.splice(i, 1);
-                            }
-                        }
-                    }
-
-                    return this;
-                }
             },
 
             transition = function transition(stateName, eventName, nextEvent) {
@@ -178,10 +118,6 @@
                 return function event() {
 
                     var
-                        onBeforeEvent,
-
-                        onAfterEvent,
-
                         nextState,
 
                         eventValue = stateMachine;
@@ -194,13 +130,6 @@
                         }
 
                         return eventValue;
-                    }
-
-                    onBeforeEvent = stateMachine['onbefore' + eventName];
-
-                    if (onBeforeEvent && typeof onBeforeEvent === 'function') {
-
-                        onBeforeEvent.call(stateStore, eventName, currentState.name, currentState.name);
                     }
 
                     eventValue = stateStore[stateName][eventName].apply(stateStore, arguments);
@@ -222,13 +151,6 @@
                         nextState = eventValue[0];
 
                         eventValue = eventValue[1];
-                    }
-
-                    onAfterEvent = stateMachine['onafter' + eventName] || stateMachine['on' + eventName];
-
-                    if (onAfterEvent && typeof onAfterEvent === 'function') {
-
-                        onAfterEvent.call(stateStore, eventName, currentState.name, nextState.name);
                     }
 
                     stateStore.setMachineState(nextState, eventName);
@@ -259,7 +181,7 @@
                             })(stateStore[stateName][eventName]);
                         }
 
-                        if (typeof stateStore[stateName][eventName] === 'function') {
+                        if (typeof stateStore[stateName][eventName] === 'function' && ['__enter__', '__leave__'].indexOf(eventName) === -1) {
 
                             stateMachine[eventName] = transition(stateName, eventName, stateMachine[eventName]);
                         }
