@@ -1,0 +1,27 @@
+{
+  "name": "Stately.js",
+  "main": "Stately.js",
+  "version": "1.2.0",
+  "homepage": "https://github.com/fschaefer/Stately.js",
+  "authors": [
+    "Florian Schäfer <florian.schaefer+github@gmail.com>",
+    "rowan <rowanu@gmail.com>"
+  ],
+  "description": "Stately.js is a JavaScript based finite-state machine (FSM) engine for Node.js and the browser.",
+  "keywords": [
+    "fsm",
+    "finite",
+    "state",
+    "machine",
+    "stately",
+    "stately.js"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
