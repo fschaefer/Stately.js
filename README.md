@@ -130,6 +130,8 @@ access the other states of the machine:
 
         //transition from STATE1 to STATE2
         return this.STATE2;
+        // as an alternative just return the new state as string
+        // return 'STATE2';
     }
 }
 
@@ -160,7 +162,7 @@ value:
 ...
 ```
 
-For asynchronous actions there are `getMachineState()` and  
+For asynchronous actions there are `getMachineState()` and
 `setMachineState(nextState)` accessible through the `this` reference of an
 action:
 
