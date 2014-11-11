@@ -83,6 +83,12 @@
 
                         lastState = currentState;
 
+                    if (typeof nextState === 'string') {
+
+                        nextState = stateStore[nextState];
+
+                    }
+
                     if (!nextState || !nextState.name || !stateStore[nextState.name]) {
 
                         throw new InvalidStateError('Stately.js: Transitioned into invalid state: `' + setMachineState.caller + '`.');
