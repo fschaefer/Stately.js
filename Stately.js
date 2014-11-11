@@ -211,6 +211,12 @@
 
                         eventValue = stateMachine;
 
+                    } else if (typeof eventValue === 'string') {
+
+                        nextState = stateStore[eventValue];
+
+                        eventValue = stateMachine;
+
                     } else if (toString.call(eventValue) === '[object Object]') {
 
                         nextState = (eventValue === stateStore ? currentState : eventValue);
