@@ -231,7 +231,15 @@
 
                     } else if (toString.call(eventValue) === '[object Array]' && eventValue.length >= 1) {
 
-                        nextState = eventValue[0];
+                        if (typeof eventValue[0] === 'string') {
+
+                            nextState = stateStore[eventValue[0]];
+
+                        } else {
+
+                            nextState = eventValue[0];
+
+                        }
 
                         eventValue = eventValue[1];
                     }
