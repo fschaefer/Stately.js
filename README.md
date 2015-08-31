@@ -17,6 +17,10 @@ and include it to your project by:
 var Stately = require('stately.js');
 ```
 
+Alternately, you can install Stately.js with `bower`:
+
+    $ bower install --save Stately.js
+
 In browsers you can include it directly by adding it to the document head section:
 
 ```html
