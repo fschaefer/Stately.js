@@ -239,7 +239,7 @@ Inside the `notification`, `this` refers to the internal `stateStore`.
 
 Beside the notification system via `bind` and `unbind`, there is an alternative
 way to attach hooks that are triggered when the state of the machine changes.
-Possible hooks are `onbeforeSTATE`, `onenterSTATE` (or as shortcut `onSTATE`)
+Possible hooks are `onenterSTATE` (or as shortcut `onSTATE`)
 and `onleaveSTATE` for states and `onbeforeEVENT` and `onafterEVENT` for
 events. Hook functions have the same signature as notifications bound with
 `bind`.

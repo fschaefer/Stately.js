@@ -4,7 +4,7 @@
  * Copyright (c) 2012 Florian Schäfer (florian.schaefer@gmail.com)
  * Released under MIT license.
  *
- * Version: 1.2.0
+ * Version: 1.3.0
  *
  */
 (function (root, factory) {
@@ -75,8 +75,6 @@
                     var
                         eventName = arguments[1],
 
-                        onBeforeState,
-
                         onEnterState,
 
                         onLeaveState,
@@ -95,13 +93,6 @@
                     }
 
                     currentState = nextState;
-
-                    onBeforeState = stateMachine['onbefore' + currentState.name];
-
-                    if (onBeforeState && typeof onBeforeState === 'function') {
-
-                        onBeforeState.call(stateStore, eventName, lastState.name, nextState.name);
-                    }
 
                     onEnterState = stateMachine['onenter' + currentState.name] || stateMachine['on' + currentState.name];
 
