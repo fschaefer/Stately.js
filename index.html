@@ -1,0 +1,417 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Stately.js by fschaefer</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/github-light.css">
+    <meta name="viewport" content="width=device-width">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1>Stately.js</h1>
+        <p>Stately.js is a JavaScript based finite-state machine (FSM) engine for Node.js and the browser.</p>
+
+        <p class="view"><a href="https://github.com/fschaefer/Stately.js">View the Project on GitHub <small>fschaefer/Stately.js</small></a></p>
+
+
+        <ul>
+          <li><a href="https://github.com/fschaefer/Stately.js/zipball/master">Download <strong>ZIP File</strong></a></li>
+          <li><a href="https://github.com/fschaefer/Stately.js/tarball/master">Download <strong>TAR Ball</strong></a></li>
+          <li><a href="https://github.com/fschaefer/Stately.js">View On <strong>GitHub</strong></a></li>
+        </ul>
+      </header>
+      <section>
+        <p><img src="https://github.com/fschaefer/Stately.js/raw/master/misc/Stately.js.png" alt="Stately.js Logo"></p>
+
+<h2>
+<a id="what-is-it" class="anchor" href="#what-is-it" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>What is it?</h2>
+
+<p>Stately.js is a JavaScript based finite-state machine (FSM) engine for Node.js
+and the browser.</p>
+
+<h2>
+<a id="installation" class="anchor" href="#installation" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Installation</h2>
+
+<p>In Node.js you can install Stately.js with <code>npm</code>:</p>
+
+<pre><code>$ npm install stately.js
+</code></pre>
+
+<p>and include it to your project by:</p>
+
+<div class="highlight highlight-source-js"><pre><span class="pl-k">var</span> Stately <span class="pl-k">=</span> <span class="pl-c1">require</span>(<span class="pl-s"><span class="pl-pds">'</span>stately.js<span class="pl-pds">'</span></span>);</pre></div>
+
+<p>Alternately, you can install Stately.js with <code>bower</code>:</p>
+
+<pre><code>$ bower install --save Stately.js
+</code></pre>
+
+<p>In browsers you can include it directly by adding it to the document head section:</p>
+
+<div class="highlight highlight-text-html-basic"><pre>&lt;<span class="pl-ent">script</span> <span class="pl-e">type</span>=<span class="pl-s"><span class="pl-pds">"</span>text/javascript<span class="pl-pds">"</span></span> <span class="pl-e">src</span>=<span class="pl-s"><span class="pl-pds">"</span>https://raw.github.com/fschaefer/Stately.js/master/Stately.js<span class="pl-pds">"</span></span>&gt;&lt;/<span class="pl-ent">script</span>&gt;
+<span class="pl-s1">&lt;<span class="pl-ent">script</span> <span class="pl-e">type</span>=<span class="pl-s"><span class="pl-pds">"</span>text/javascript<span class="pl-pds">"</span></span>&gt;</span>
+<span class="pl-s1">    <span class="pl-c">// use Stately</span></span>
+<span class="pl-s1">&lt;/<span class="pl-ent">script</span>&gt;</span></pre></div>
+
+<p>or with Asynchronous Module Definition by e.g.:</p>
+
+<div class="highlight highlight-text-html-basic"><pre>&lt;<span class="pl-ent">script</span> <span class="pl-e">type</span>=<span class="pl-s"><span class="pl-pds">"</span>text/javascript<span class="pl-pds">"</span></span> <span class="pl-e">src</span>=<span class="pl-s"><span class="pl-pds">"</span>https://raw.github.com/jrburke/requirejs/master/require.js<span class="pl-pds">"</span></span>&gt;&lt;/<span class="pl-ent">script</span>&gt;
+<span class="pl-s1">&lt;<span class="pl-ent">script</span> <span class="pl-e">type</span>=<span class="pl-s"><span class="pl-pds">"</span>text/javascript<span class="pl-pds">"</span></span>&gt;</span>
+<span class="pl-s1"><span class="pl-c1">require</span>([<span class="pl-s"><span class="pl-pds">'</span>https://raw.github.com/fschaefer/Stately.js/master/Stately.js<span class="pl-pds">'</span></span>], <span class="pl-k">function</span> (<span class="pl-smi">Stately</span>) {</span>
+<span class="pl-s1">    <span class="pl-c">// use Stately</span></span>
+<span class="pl-s1">});</span>
+<span class="pl-s1">&lt;/<span class="pl-ent">script</span>&gt;</span></pre></div>
+
+<h2>
+<a id="usage" class="anchor" href="#usage" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Usage</h2>
+
+<h3>
+<a id="creating-a-new-machine" class="anchor" href="#creating-a-new-machine" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Creating a new machine</h3>
+
+<p>A new state machine can be created with either the new operator:</p>
+
+<div class="highlight highlight-source-js"><pre><span class="pl-k">var</span> machine <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-en">Stately</span>(statesObject, initialStateName);</pre></div>
+
+<p>or the factory method:</p>
+
+<div class="highlight highlight-source-js"><pre><span class="pl-k">var</span> machine <span class="pl-k">=</span> <span class="pl-smi">Stately</span>.<span class="pl-en">machine</span>(statesObject, initialStateName);</pre></div>
+
+<p>Both will return a new <code>stateMachine</code> object, with all events from all states
+attached to it. The machine will transition into the initial state <code>initialStateName</code>
+ or the first attached <code>stateObject</code> if <code>initialStateName</code> is omitted. In addition
+to the events the <code>stateMachine</code> object has a <code>getMachineState()</code> method, returning
+the current name of the machines state, <code>getMachineEvents()</code>, returning possible
+events in the current state, and <code>bind()</code> and <code>unbind()</code> methods, to register
+callbacks to receive <code>notifications</code> when the machine transitions into another state.</p>
+
+<p>The <code>statesObject</code> is an object  with <code>stateObject</code> objects attached as
+properties.
+The property names of the <code>statesObject</code> are the <code>states</code> of the machine.
+The attached <code>stateObject</code> objects model the machines states with the property
+names as <code>events</code> and the connected functions as <code>actions</code>:</p>
+
+<div class="highlight highlight-source-js"><pre><span class="pl-k">var</span> machine <span class="pl-k">=</span> <span class="pl-smi">Stately</span>.<span class="pl-en">machine</span>({
+    <span class="pl-s"><span class="pl-pds">'</span>STATE0<span class="pl-pds">'</span></span><span class="pl-k">:</span> {
+        <span class="pl-en">event</span><span class="pl-k">:</span> <span class="pl-k">function</span> () {
+            <span class="pl-k">...</span>
+        }
+    },
+    <span class="pl-s"><span class="pl-pds">'</span>STATE1<span class="pl-pds">'</span></span><span class="pl-k">:</span> {
+        <span class="pl-en">event</span><span class="pl-k">:</span> <span class="pl-k">function</span> () {
+            <span class="pl-k">...</span>
+        }
+    },
+    <span class="pl-s"><span class="pl-pds">'</span>STATE2<span class="pl-pds">'</span></span><span class="pl-k">:</span>{
+        <span class="pl-en">event</span><span class="pl-k">:</span> <span class="pl-k">function</span> () {
+            <span class="pl-k">...</span>
+        },
+        <span class="pl-en">anotherEvent</span><span class="pl-k">:</span> <span class="pl-k">function</span> () {
+            <span class="pl-k">...</span>
+        }
+    }
+});</pre></div>
+
+<p>If different states use the same event identifier, the <code>events</code> are chained up
+and the machine handles calling the correct <code>action</code> for the current state (if
+the <code>event</code> is handled in the current state). If the event is not handled in
+the current state, it is ignored.</p>
+
+<p>If no immediate <code>action</code> needs to be declared, the desired transition <code>state</code>
+can be attached to the <code>event</code> as string directly:</p>
+
+<div class="highlight highlight-source-js"><pre><span class="pl-k">var</span> machine <span class="pl-k">=</span> <span class="pl-smi">Stately</span>.<span class="pl-en">machine</span>({
+    <span class="pl-s"><span class="pl-pds">'</span>STATE0<span class="pl-pds">'</span></span><span class="pl-k">:</span> {
+        <span class="pl-s"><span class="pl-pds">'</span>event<span class="pl-pds">'</span></span><span class="pl-k">:</span>        <span class="pl-c">/* =&gt; */</span> <span class="pl-s"><span class="pl-pds">'</span>STATE1<span class="pl-pds">'</span></span>
+    },
+    <span class="pl-s"><span class="pl-pds">'</span>STATE1<span class="pl-pds">'</span></span><span class="pl-k">:</span> {
+        <span class="pl-s"><span class="pl-pds">'</span>event<span class="pl-pds">'</span></span><span class="pl-k">:</span>        <span class="pl-c">/* =&gt; */</span> <span class="pl-s"><span class="pl-pds">'</span>STATE2<span class="pl-pds">'</span></span>
+    },
+    <span class="pl-s"><span class="pl-pds">'</span>STATE2<span class="pl-pds">'</span></span><span class="pl-k">:</span> {
+        <span class="pl-s"><span class="pl-pds">'</span>event<span class="pl-pds">'</span></span><span class="pl-k">:</span>        <span class="pl-c">/* =&gt; */</span> <span class="pl-s"><span class="pl-pds">'</span>STATE0<span class="pl-pds">'</span></span>,
+        <span class="pl-s"><span class="pl-pds">'</span>anotherEvent<span class="pl-pds">'</span></span><span class="pl-k">:</span> <span class="pl-c">/* =&gt; */</span> <span class="pl-s"><span class="pl-pds">'</span>STATE1<span class="pl-pds">'</span></span>
+    }
+});</pre></div>
+
+<h3>
+<a id="transitions" class="anchor" href="#transitions" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Transitions</h3>
+
+<p>There are several ways an <code>action</code> can transition the machine into another
+state. The simplest form is returning the desired next state from an action.
+Therefore, <code>this</code> refers to the (internal) <code>stateStore</code> inside an <code>action</code> to
+access the other states of the machine:</p>
+
+<div class="highlight highlight-source-js"><pre><span class="pl-k">...</span>
+
+<span class="pl-s"><span class="pl-pds">'</span>STATE1<span class="pl-pds">'</span></span><span class="pl-k">:</span> {
+    <span class="pl-en">doSomething</span><span class="pl-k">:</span> <span class="pl-k">function</span> () {
+
+        <span class="pl-k">...</span>
+
+        <span class="pl-c">//transition from STATE1 to STATE2</span>
+        <span class="pl-k">return</span> <span class="pl-v">this</span>.<span class="pl-c1">STATE2</span>;
+        <span class="pl-c">// as an alternative just return the new state as string</span>
+        <span class="pl-c">// return 'STATE2';</span>
+    }
+}
+
+<span class="pl-k">...</span></pre></div>
+
+<p>If an action should not transition the machine into another state, just omit
+the return value (or return the current state).</p>
+
+<p>Sometimes it is desired to return a value from an action. In this case the
+return value must be an array with two elements. The first element is the next
+state the machine should transition into, and the second element the return
+value:</p>
+
+<div class="highlight highlight-source-js"><pre><span class="pl-k">...</span>
+
+<span class="pl-s"><span class="pl-pds">'</span>STATE1<span class="pl-pds">'</span></span><span class="pl-k">:</span> {
+    <span class="pl-en">doSomething</span><span class="pl-k">:</span> <span class="pl-k">function</span> () {
+
+        <span class="pl-k">...</span>
+
+        <span class="pl-c">//transition from STATE1 to STATE2 and return a string</span>
+        <span class="pl-k">return</span> [<span class="pl-v">this</span>.<span class="pl-c1">STATE2</span>, <span class="pl-s"><span class="pl-pds">'</span>this is a return value<span class="pl-pds">'</span></span>];
+    }
+}
+
+<span class="pl-k">...</span></pre></div>
+
+<p>For asynchronous actions there are <code>getMachineState()</code> and
+<code>setMachineState(nextState)</code> accessible through the <code>this</code> reference of an
+action:</p>
+
+<div class="highlight highlight-source-js"><pre><span class="pl-k">...</span>
+
+<span class="pl-s"><span class="pl-pds">'</span>STATE1<span class="pl-pds">'</span></span><span class="pl-k">:</span> {
+    <span class="pl-en">doSomething</span><span class="pl-k">:</span> <span class="pl-k">function</span> () {
+        <span class="pl-k">var</span> self <span class="pl-k">=</span> <span class="pl-v">this</span>;
+
+        <span class="pl-c1">setTimeout</span>(<span class="pl-k">function</span> () {
+
+            <span class="pl-k">...</span>
+
+            <span class="pl-smi">self</span>.<span class="pl-en">setMachineState</span>(<span class="pl-smi">self</span>.<span class="pl-c1">STATE2</span>);
+        }, <span class="pl-c1">5000</span>);
+
+        <span class="pl-k">...</span>
+
+    }
+}
+
+<span class="pl-k">...</span></pre></div>
+
+<p>Because <code>this</code> refers to the <code>stateStore</code>, it is also possible to call an
+action from another state (note: this won't trigger the <code>notification</code>
+callbacks):</p>
+
+<div class="highlight highlight-source-js"><pre><span class="pl-k">...</span>
+
+<span class="pl-s"><span class="pl-pds">'</span>STATE1<span class="pl-pds">'</span></span><span class="pl-k">:</span> {
+    <span class="pl-en">doSomething</span><span class="pl-k">:</span> <span class="pl-k">function</span> () {
+
+        <span class="pl-k">...</span>
+
+        <span class="pl-v">this</span>.<span class="pl-c1">STATE2</span>.<span class="pl-smi">doSomethingDifferent</span>.<span class="pl-c1">call</span>(<span class="pl-v">this</span>);
+
+        <span class="pl-k">...</span>
+
+        <span class="pl-k">return</span> <span class="pl-v">this</span>.<span class="pl-c1">STATE3</span>.<span class="pl-smi">doSomethingCompletelyDifferent</span>.<span class="pl-c1">call</span>(<span class="pl-v">this</span>);
+    }
+}
+
+<span class="pl-k">...</span></pre></div>
+
+<h3>
+<a id="notifications" class="anchor" href="#notifications" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Notifications</h3>
+
+<p>Once in a while, it is useful to get a <code>notification</code> when the machine
+transitions into another state. Therefore the <code>stateMachine</code> object has
+<code>bind(callback)</code> and <code>unbind(callback)</code> to register and unregister notification
+handlers that get called when the state changes. A notification callback has
+the following form:</p>
+
+<div class="highlight highlight-source-js"><pre><span class="pl-k">function</span> <span class="pl-en">notification</span> (<span class="pl-smi">event</span>, <span class="pl-smi">oldState</span>, <span class="pl-smi">newState</span>) {
+    <span class="pl-k">...</span>
+}</pre></div>
+
+<p><code>event</code> - The event that triggered the transition.
+<code>oldState</code> - The old state the machine is transitioned from.
+<code>newState</code> - The new state the machine is transitioned into.</p>
+
+<p>Inside the <code>notification</code>, <code>this</code> refers to the internal <code>stateStore</code>.</p>
+
+<h3>
+<a id="hooks" class="anchor" href="#hooks" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Hooks</h3>
+
+<p>Beside the notification system via <code>bind</code> and <code>unbind</code>, there is an alternative
+way to attach hooks that are triggered when the state of the machine changes.
+Possible hooks are <code>onenterSTATE</code> (or as shortcut <code>onSTATE</code>)
+and <code>onleaveSTATE</code> for states and <code>onbeforeEVENT</code> and <code>onafterEVENT</code> for
+events. Hook functions have the same signature as notifications bound with
+<code>bind</code>.</p>
+
+<h2>
+<a id="examples" class="anchor" href="#examples" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Examples</h2>
+
+<h3>
+<a id="door" class="anchor" href="#door" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Door</h3>
+
+<div class="highlight highlight-source-js"><pre><span class="pl-k">var</span> door <span class="pl-k">=</span> <span class="pl-smi">Stately</span>.<span class="pl-en">machine</span>({
+    <span class="pl-s"><span class="pl-pds">'</span>OPEN<span class="pl-pds">'</span></span><span class="pl-k">:</span> {
+        <span class="pl-s"><span class="pl-pds">'</span>close<span class="pl-pds">'</span></span><span class="pl-k">:</span>  <span class="pl-c">/* =&gt; */</span> <span class="pl-s"><span class="pl-pds">'</span>CLOSED<span class="pl-pds">'</span></span>
+    },
+    <span class="pl-s"><span class="pl-pds">'</span>CLOSED<span class="pl-pds">'</span></span><span class="pl-k">:</span> {
+        <span class="pl-s"><span class="pl-pds">'</span>open<span class="pl-pds">'</span></span><span class="pl-k">:</span>   <span class="pl-c">/* =&gt; */</span> <span class="pl-s"><span class="pl-pds">'</span>OPEN<span class="pl-pds">'</span></span>,
+        <span class="pl-s"><span class="pl-pds">'</span>lock<span class="pl-pds">'</span></span><span class="pl-k">:</span>   <span class="pl-c">/* =&gt; */</span> <span class="pl-s"><span class="pl-pds">'</span>LOCKED<span class="pl-pds">'</span></span>
+    },
+    <span class="pl-s"><span class="pl-pds">'</span>LOCKED<span class="pl-pds">'</span></span><span class="pl-k">:</span> {
+        <span class="pl-s"><span class="pl-pds">'</span>unlock<span class="pl-pds">'</span></span><span class="pl-k">:</span> <span class="pl-c">/* =&gt; */</span> <span class="pl-s"><span class="pl-pds">'</span>CLOSED<span class="pl-pds">'</span></span>,
+        <span class="pl-s"><span class="pl-pds">'</span>break<span class="pl-pds">'</span></span><span class="pl-k">:</span>  <span class="pl-c">/* =&gt; */</span> <span class="pl-s"><span class="pl-pds">'</span>BROKEN<span class="pl-pds">'</span></span>
+    },
+    <span class="pl-s"><span class="pl-pds">'</span>BROKEN<span class="pl-pds">'</span></span><span class="pl-k">:</span> {
+        <span class="pl-s"><span class="pl-pds">'</span><span class="pl-en">fix</span><span class="pl-pds">'</span></span><span class="pl-k">:</span> <span class="pl-k">function</span> () {
+            <span class="pl-v">this</span>.<span class="pl-smi">fixed</span> <span class="pl-k">=</span> (<span class="pl-v">this</span>.<span class="pl-smi">fixed</span> <span class="pl-k">===</span> <span class="pl-c1">undefined</span> <span class="pl-k">?</span> <span class="pl-c1">1</span> <span class="pl-k">:</span> <span class="pl-k">++</span><span class="pl-v">this</span>.<span class="pl-smi">fixed</span>);
+            <span class="pl-k">return</span> <span class="pl-v">this</span>.<span class="pl-smi">fixed</span> <span class="pl-k">&lt;</span> <span class="pl-c1">3</span> <span class="pl-k">?</span> <span class="pl-v">this</span>.<span class="pl-c1">OPEN</span> <span class="pl-k">:</span> <span class="pl-v">this</span>.<span class="pl-c1">BROKEN</span>;
+        }
+    }
+});
+
+<span class="pl-c">//the initial state of the door is open (it's the first state object)</span>
+<span class="pl-en">console</span>.<span class="pl-c1">log</span>(<span class="pl-smi">door</span>.<span class="pl-en">getMachineState</span>() <span class="pl-k">===</span> <span class="pl-s"><span class="pl-pds">'</span>OPEN<span class="pl-pds">'</span></span>);        <span class="pl-c">// true;</span>
+
+<span class="pl-c">//close and lock the door</span>
+<span class="pl-smi">door</span>.<span class="pl-c1">close</span>().<span class="pl-en">lock</span>();
+<span class="pl-en">console</span>.<span class="pl-c1">log</span>(<span class="pl-smi">door</span>.<span class="pl-en">getMachineState</span>() <span class="pl-k">===</span> <span class="pl-s"><span class="pl-pds">'</span>LOCKED<span class="pl-pds">'</span></span>);      <span class="pl-c">// true;</span>
+
+<span class="pl-c">//try to open it</span>
+<span class="pl-smi">door</span>.<span class="pl-c1">open</span>();
+<span class="pl-en">console</span>.<span class="pl-c1">log</span>(<span class="pl-smi">door</span>.<span class="pl-en">getMachineState</span>() <span class="pl-k">===</span> <span class="pl-s"><span class="pl-pds">'</span>OPEN<span class="pl-pds">'</span></span>);        <span class="pl-c">// false;</span>
+
+<span class="pl-c">//unlock, open, lock (is ignored because it fails), close, and lock</span>
+<span class="pl-smi">door</span>.<span class="pl-en">unlock</span>().<span class="pl-c1">open</span>().<span class="pl-en">lock</span>().<span class="pl-c1">close</span>().<span class="pl-en">lock</span>();
+<span class="pl-en">console</span>.<span class="pl-c1">log</span>(<span class="pl-smi">door</span>.<span class="pl-en">getMachineState</span>() <span class="pl-k">===</span> <span class="pl-s"><span class="pl-pds">'</span>LOCKED<span class="pl-pds">'</span></span>);      <span class="pl-c">// true;</span>
+
+<span class="pl-c">//the door is still locked, break it</span>
+<span class="pl-smi">door</span>.<span class="pl-en">break</span>();
+<span class="pl-en">console</span>.<span class="pl-c1">log</span>(<span class="pl-smi">door</span>.<span class="pl-en">getMachineState</span>() <span class="pl-k">===</span> <span class="pl-s"><span class="pl-pds">'</span>BROKEN<span class="pl-pds">'</span></span>);      <span class="pl-c">// true;</span>
+
+<span class="pl-c">//fix opens the door, close it, lock it, break it again</span>
+<span class="pl-smi">door</span>.<span class="pl-en">fix</span>().<span class="pl-c1">close</span>().<span class="pl-en">lock</span>().<span class="pl-en">break</span>();
+<span class="pl-en">console</span>.<span class="pl-c1">log</span>(<span class="pl-smi">door</span>.<span class="pl-en">getMachineState</span>() <span class="pl-k">===</span> <span class="pl-s"><span class="pl-pds">'</span>BROKEN<span class="pl-pds">'</span></span>);      <span class="pl-c">// true;</span>
+
+<span class="pl-c">//and again fix opens the door, close it, lock it, break it</span>
+<span class="pl-smi">door</span>.<span class="pl-en">fix</span>().<span class="pl-c1">close</span>().<span class="pl-en">lock</span>().<span class="pl-en">break</span>();
+<span class="pl-en">console</span>.<span class="pl-c1">log</span>(<span class="pl-smi">door</span>.<span class="pl-en">getMachineState</span>() <span class="pl-k">===</span> <span class="pl-s"><span class="pl-pds">'</span>BROKEN<span class="pl-pds">'</span></span>);      <span class="pl-c">// true;</span>
+
+<span class="pl-c">//fixing is limited, the door stays broken</span>
+<span class="pl-smi">door</span>.<span class="pl-en">fix</span>();
+<span class="pl-en">console</span>.<span class="pl-c1">log</span>(<span class="pl-smi">door</span>.<span class="pl-en">getMachineState</span>() <span class="pl-k">===</span> <span class="pl-s"><span class="pl-pds">'</span>OPEN<span class="pl-pds">'</span></span>);        <span class="pl-c">// false;</span>
+<span class="pl-en">console</span>.<span class="pl-c1">log</span>(<span class="pl-smi">door</span>.<span class="pl-en">getMachineState</span>() <span class="pl-k">===</span> <span class="pl-s"><span class="pl-pds">'</span>BROKEN<span class="pl-pds">'</span></span>);      <span class="pl-c">// true;</span></pre></div>
+
+<h3>
+<a id="radio" class="anchor" href="#radio" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Radio</h3>
+
+<div class="highlight highlight-source-js"><pre><span class="pl-k">var</span> radio <span class="pl-k">=</span> <span class="pl-smi">Stately</span>.<span class="pl-en">machine</span>({
+    <span class="pl-s"><span class="pl-pds">'</span>STOPPED<span class="pl-pds">'</span></span><span class="pl-k">:</span> {
+        <span class="pl-en">play</span><span class="pl-k">:</span> <span class="pl-k">function</span> () {
+            <span class="pl-k">return</span> <span class="pl-v">this</span>.<span class="pl-c1">PLAYING</span>;
+        }
+    },
+    <span class="pl-s"><span class="pl-pds">'</span>PLAYING<span class="pl-pds">'</span></span><span class="pl-k">:</span> {
+        <span class="pl-en">stop</span><span class="pl-k">:</span> <span class="pl-k">function</span> () {
+            <span class="pl-k">return</span> <span class="pl-v">this</span>.<span class="pl-c1">STOPPED</span>;
+        },
+        <span class="pl-en">pause</span><span class="pl-k">:</span> <span class="pl-k">function</span> () {
+            <span class="pl-k">return</span> <span class="pl-v">this</span>.<span class="pl-c1">PAUSED</span>;
+        }
+    },
+    <span class="pl-s"><span class="pl-pds">'</span>PAUSED<span class="pl-pds">'</span></span><span class="pl-k">:</span> {
+        <span class="pl-en">play</span><span class="pl-k">:</span> <span class="pl-k">function</span> () {
+            <span class="pl-k">return</span> <span class="pl-v">this</span>.<span class="pl-c1">PLAYING</span>;
+        },
+        <span class="pl-en">stop</span><span class="pl-k">:</span> <span class="pl-k">function</span> () {
+            <span class="pl-k">return</span> <span class="pl-v">this</span>.<span class="pl-c1">STOPPED</span>;
+        }
+    }
+}).<span class="pl-en">bind</span>(<span class="pl-k">function</span> (<span class="pl-smi">event</span>, <span class="pl-smi">oldState</span>, <span class="pl-smi">newState</span>) {
+
+    <span class="pl-k">var</span> transition <span class="pl-k">=</span> oldState <span class="pl-k">+</span> <span class="pl-s"><span class="pl-pds">'</span> =&gt; <span class="pl-pds">'</span></span> <span class="pl-k">+</span> newState;
+
+    <span class="pl-k">switch</span> (transition) {
+        <span class="pl-c">/*</span>
+<span class="pl-c">        ...</span>
+<span class="pl-c">        case 'STOPPED =&gt; PLAYING':</span>
+<span class="pl-c">        case 'PLAYING =&gt; PAUSED':</span>
+<span class="pl-c">        ...</span>
+<span class="pl-c">        */</span>
+        <span class="pl-k">default</span><span class="pl-k">:</span>
+            <span class="pl-en">console</span>.<span class="pl-c1">log</span>(transition);
+            <span class="pl-k">break</span>;
+    }
+});
+
+<span class="pl-smi">radio</span>.<span class="pl-en">play</span>().<span class="pl-en">pause</span>().<span class="pl-en">play</span>().<span class="pl-en">pause</span>().<span class="pl-c1">stop</span>();
+<span class="pl-c">//STOPPED =&gt; PLAYING</span>
+<span class="pl-c">//PLAYING =&gt; PAUSED</span>
+<span class="pl-c">//PAUSED =&gt; PLAYING</span>
+<span class="pl-c">//PLAYING =&gt; PAUSED</span>
+<span class="pl-c">//PAUSED =&gt; STOPPED</span></pre></div>
+
+<h3>
+<a id="radio-more-declarative" class="anchor" href="#radio-more-declarative" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Radio (more declarative)</h3>
+
+<div class="highlight highlight-source-js"><pre><span class="pl-k">var</span> radio <span class="pl-k">=</span> <span class="pl-smi">Stately</span>.<span class="pl-en">machine</span>({
+    <span class="pl-s"><span class="pl-pds">'</span>STOPPED<span class="pl-pds">'</span></span><span class="pl-k">:</span> {
+        <span class="pl-s"><span class="pl-pds">'</span>play<span class="pl-pds">'</span></span><span class="pl-k">:</span> <span class="pl-c">/* =&gt; */</span> <span class="pl-s"><span class="pl-pds">'</span>PLAYING<span class="pl-pds">'</span></span>
+    },
+    <span class="pl-s"><span class="pl-pds">'</span>PLAYING<span class="pl-pds">'</span></span><span class="pl-k">:</span> {
+        <span class="pl-s"><span class="pl-pds">'</span>stop<span class="pl-pds">'</span></span><span class="pl-k">:</span>  <span class="pl-c">/* =&gt; */</span> <span class="pl-s"><span class="pl-pds">'</span>STOPPED<span class="pl-pds">'</span></span>,
+        <span class="pl-s"><span class="pl-pds">'</span>pause<span class="pl-pds">'</span></span><span class="pl-k">:</span> <span class="pl-c">/* =&gt; */</span> <span class="pl-s"><span class="pl-pds">'</span>PAUSED<span class="pl-pds">'</span></span>
+    },
+    <span class="pl-s"><span class="pl-pds">'</span>PAUSED<span class="pl-pds">'</span></span><span class="pl-k">:</span> {
+        <span class="pl-s"><span class="pl-pds">'</span>play<span class="pl-pds">'</span></span><span class="pl-k">:</span> <span class="pl-c">/* =&gt; */</span> <span class="pl-s"><span class="pl-pds">'</span>PLAYING<span class="pl-pds">'</span></span>,
+        <span class="pl-s"><span class="pl-pds">'</span>stop<span class="pl-pds">'</span></span><span class="pl-k">:</span> <span class="pl-c">/* =&gt; */</span> <span class="pl-s"><span class="pl-pds">'</span>STOPPED<span class="pl-pds">'</span></span>
+    }
+});
+
+<span class="pl-c1">radio</span>.<span class="pl-en">onleaveSTOPPED</span> <span class="pl-k">=</span> <span class="pl-k">function</span> (<span class="pl-smi">event</span>, <span class="pl-smi">oldState</span>, <span class="pl-smi">newState</span>) {
+    <span class="pl-c">// ...</span>
+};
+
+<span class="pl-c1">radio</span>.<span class="pl-en">onenterSTOPPED</span> <span class="pl-k">=</span> <span class="pl-k">function</span> (<span class="pl-smi">event</span>, <span class="pl-smi">oldState</span>, <span class="pl-smi">newState</span>) {
+    <span class="pl-c">// ...</span>
+};
+
+<span class="pl-c1">radio</span>.<span class="pl-en">onPLAYING</span> <span class="pl-k">=</span> <span class="pl-k">function</span> (<span class="pl-smi">event</span>, <span class="pl-smi">oldState</span>, <span class="pl-smi">newState</span>) {
+    <span class="pl-c">// ...</span>
+};
+
+<span class="pl-c1">radio</span>.<span class="pl-en">onPAUSED</span> <span class="pl-k">=</span> <span class="pl-k">function</span> (<span class="pl-smi">event</span>, <span class="pl-smi">oldState</span>, <span class="pl-smi">newState</span>) {
+    <span class="pl-c">// ...</span>
+};</pre></div>
+
+<h2>
+<a id="jsfiddles" class="anchor" href="#jsfiddles" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>jsFiddles</h2>
+
+<ul>
+<li><a href="http://jsfiddle.net/sz2hG/">http://jsfiddle.net/sz2hG/</a></li>
+</ul>
+      </section>
+      <footer>
+        <p>This project is maintained by <a href="https://github.com/fschaefer">fschaefer</a></p>
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+      </footer>
+    </div>
+    <script src="javascripts/scale.fix.js"></script>
+    
+  </body>
+</html>
