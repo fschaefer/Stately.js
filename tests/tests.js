@@ -183,6 +183,50 @@ var test = {
                 this.assert(onOPEN === true, 'Report correct event 6');
             }
         },
+
+        {
+            name: 'Hooks (using on).',
+            method: function () {
+
+                var onleaveCLOSED,
+                onenterCLOSED,
+                onCLOSED,
+                onOPEN;
+
+                door = Stately.machine({
+                    'OPEN': {
+                        close: function () {
+                            return this.CLOSED;
+                        }
+                    },
+                    'CLOSED': {
+                        open: function () {
+                            return this.OPEN;
+                        }
+                    }
+                });
+
+                door.on('leave', 'CLOSED', function () {
+                    onleaveCLOSED = true;
+                });
+
+                door.on('enter', 'CLOSED', function () {
+                    onenterCLOSED = true;
+                });
+
+                door.on('OPEN', function () {
+                    onOPEN = true;
+                });
+
+                this.assert(door.close().getMachineState() === 'CLOSED', 'Transition into a new state.');
+                this.assert(door.open().getMachineState() === 'OPEN', 'Transition into a new state.');
+                this.assert(door.close().getMachineState() === 'CLOSED', 'Transition into a new state.');
+                this.assert(onleaveCLOSED === true, 'Report correct event 1');
+                this.assert(onenterCLOSED === true, 'Report correct event 2');
+                this.assert(onOPEN === true, 'Report correct event 4');
+            }
+        },
+
         {
             name: 'Exceptions.',
             method: function () {
