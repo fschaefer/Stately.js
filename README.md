@@ -349,4 +349,4 @@ radio.play().pause().play().pause().stop();
 ```
 
 ## jsFiddles
-* http://jsfiddle.net/sz2hG/
+* http://jsfiddle.net/FloHimself/sz2hG/108/
