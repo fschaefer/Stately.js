@@ -4,7 +4,7 @@
  * Copyright (c) 2012 Florian Schäfer (florian.schaefer@gmail.com)
  * Released under MIT license.
  *
- * Version: 1.3.0
+ * Version: 2.0.0
  *
  */
 (function (root, factory) {
@@ -48,20 +48,23 @@
             throw new InvalidStateError('Stately.js: Invalid states object: `' + statesObject + '`.');
         }
 
+        function resolveSpecialEventFn(stateName, fnName) {
+
+            for (var property in stateStore[stateName]) {
+
+                if (stateStore[stateName].hasOwnProperty(property)) {
+
+                    if (property.toLowerCase() === fnName.toLowerCase()) {
+
+                        return stateStore[stateName][property];
+
+                    }
+                }
+            }
+        }
+
         var
             currentState,
-
-            notificationStore = [],
-
-            notify = function () {
-
-                var notifications = notificationStore.slice();
-
-                for (var i = 0, l = notifications.length; i < l; i++) {
-
-                    notifications[i].apply(this, arguments);
-                }
-            },
 
             stateStore = {
 
@@ -94,21 +97,19 @@
 
                     currentState = nextState;
 
-                    onEnterState = stateMachine['onenter' + currentState.name] || stateMachine['on' + currentState.name];
+                    onLeaveState = resolveSpecialEventFn(lastState.name, "onLeave");
+
+                    if (onLeaveState && typeof onLeaveState === 'function') {
+
+                        onLeaveState.call(stateStore, eventName, lastState.name, currentState.name);
+                    }
+
+                    onEnterState = resolveSpecialEventFn(currentState.name, "onEnter");
 
                     if (onEnterState && typeof onEnterState === 'function') {
 
                         onEnterState.call(stateStore, eventName, lastState.name, nextState.name);
                     }
-
-                    onLeaveState = stateMachine['onleave' + lastState.name];
-
-                    if (onLeaveState && typeof onLeaveState === 'function') {
-
-                        onLeaveState.call(stateStore, eventName, lastState.name, nextState.name);
-                    }
-
-                    notify.call(stateStore, eventName, lastState.name, nextState.name);
 
                     return this;
                 },
@@ -137,37 +138,8 @@
 
                 getMachineState: stateStore.getMachineState,
 
-                getMachineEvents: stateStore.getMachineEvents,
+                getMachineEvents: stateStore.getMachineEvents
 
-                bind: function bind(callback) {
-
-                    if (callback) {
-
-                        notificationStore.push(callback);
-                    }
-
-                    return this;
-                },
-
-                unbind: function unbind(callback) {
-
-                    if (!callback) {
-
-                        notificationStore = [];
-
-                    } else {
-
-                        for (var i = 0, l = notificationStore.length; i < l; i++) {
-
-                            if (notificationStore[i] === callback) {
-
-                                notificationStore.splice(i, 1);
-                            }
-                        }
-                    }
-
-                    return this;
-                }
             },
 
             transition = function transition(stateName, eventName, nextEvent) {
@@ -193,7 +165,7 @@
                         return eventValue;
                     }
 
-                    onBeforeEvent = stateMachine['onbefore' + eventName];
+                    onBeforeEvent = resolveSpecialEventFn(currentState.name, "onBefore" + eventName);
 
                     if (onBeforeEvent && typeof onBeforeEvent === 'function') {
 
@@ -235,7 +207,7 @@
                         eventValue = eventValue[1];
                     }
 
-                    onAfterEvent = stateMachine['onafter' + eventName] || stateMachine['on' + eventName];
+                    onAfterEvent = resolveSpecialEventFn(currentState.name, "onAfter" + eventName);
 
                     if (onAfterEvent && typeof onAfterEvent === 'function') {
 
@@ -270,7 +242,13 @@
                             })(stateStore[stateName][eventName]);
                         }
 
-                        if (typeof stateStore[stateName][eventName] === 'function') {
+                        if (
+                            typeof stateStore[stateName][eventName] === 'function'
+                                && !/^onEnter$/i.test(eventName)
+                                && !/^onLeave$/i.test(eventName)
+                                && !/^onBefore/i.test(eventName)
+                                && !/^onAfter/i.test(eventName)
+                        ) {
 
                             stateMachine[eventName] = transition(stateName, eventName, stateMachine[eventName]);
                         }

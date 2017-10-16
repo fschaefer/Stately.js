@@ -62,8 +62,7 @@ attached to it. The machine will transition into the initial state `initialState
  or the first attached `stateObject` if `initialStateName` is omitted. In addition
 to the events the `stateMachine` object has a `getMachineState()` method, returning
 the current name of the machines state, `getMachineEvents()`, returning possible
-events in the current state, and `bind()` and `unbind()` methods, to register
-callbacks to receive `notifications` when the machine transitions into another state.
+events in the current state.
 
 The `statesObject` is an object  with `stateObject` objects attached as
 properties.
@@ -193,8 +192,7 @@ action:
 ```
 
 Because `this` refers to the `stateStore`, it is also possible to call an
-action from another state (note: this won't trigger the `notification`
-callbacks):
+action from another state (note: this won't trigger the `notification`s):
 
 ```js
 ...
@@ -215,16 +213,18 @@ callbacks):
 ...
 ```
 
-### Notifications
+### Special event hook functions
 
 Once in a while, it is useful to get a `notification` when the machine
-transitions into another state. Therefore the `stateMachine` object has
-`bind(callback)` and `unbind(callback)` to register and unregister notification
-handlers that get called when the state changes. A notification callback has
-the following form:
+transitions into another state. Therefore there are some special event names
+reserved for event functions, namely `onEnter`, `onLeave` (triggered
+when entering / leaving a state), `onBefore<eventname>` and `onAfter<eventname>`
+(triggered before or after calling an event).
+
+The event function has the following signature:
 
 ```js
-function notification (event, oldState, newState) {
+function (event, oldState, newState) {
     ...
 }
 ```
@@ -233,16 +233,7 @@ function notification (event, oldState, newState) {
 `oldState` - The old state the machine is transitioned from.
 `newState` - The new state the machine is transitioned into.
 
-Inside the `notification`, `this` refers to the internal `stateStore`.
-
-### Hooks
-
-Beside the notification system via `bind` and `unbind`, there is an alternative
-way to attach hooks that are triggered when the state of the machine changes.
-Possible hooks are `onenterSTATE` (or as shortcut `onSTATE`)
-and `onleaveSTATE` for states and `onbeforeEVENT` and `onafterEVENT` for
-events. Hook functions have the same signature as notifications bound with
-`bind`.
+Inside these functions, `this` refers to the internal `stateStore`.
 
 ## Examples
 
@@ -305,29 +296,7 @@ console.log(door.getMachineState() === 'BROKEN');      // true;
 ### Radio
 
 ```js
-var radio = Stately.machine({
-    'STOPPED': {
-        play: function () {
-            return this.PLAYING;
-        }
-    },
-    'PLAYING': {
-        stop: function () {
-            return this.STOPPED;
-        },
-        pause: function () {
-            return this.PAUSED;
-        }
-    },
-    'PAUSED': {
-        play: function () {
-            return this.PLAYING;
-        },
-        stop: function () {
-            return this.STOPPED;
-        }
-    }
-}).bind(function (event, oldState, newState) {
+function reporter(event, oldState, newState) {
 
     var transition = oldState + ' => ' + newState;
 
@@ -342,6 +311,33 @@ var radio = Stately.machine({
             console.log(transition);
             break;
     }
+}
+
+var radio = Stately.machine({
+    'STOPPED': {
+        onEnter: reporter,
+        play: function () {
+            return this.PLAYING;
+        }
+    },
+    'PLAYING': {
+        onEnter: reporter,
+        stop: function () {
+            return this.STOPPED;
+        },
+        pause: function () {
+            return this.PAUSED;
+        }
+    },
+    'PAUSED': {
+        onEnter: reporter,
+        play: function () {
+            return this.PLAYING;
+        },
+        stop: function () {
+            return this.STOPPED;
+        }
+    }
 });
 
 radio.play().pause().play().pause().stop();
@@ -350,40 +346,6 @@ radio.play().pause().play().pause().stop();
 //PAUSED => PLAYING
 //PLAYING => PAUSED
 //PAUSED => STOPPED
-```
-
-### Radio (more declarative)
-
-```js
-var radio = Stately.machine({
-    'STOPPED': {
-        'play': /* => */ 'PLAYING'
-    },
-    'PLAYING': {
-        'stop':  /* => */ 'STOPPED',
-        'pause': /* => */ 'PAUSED'
-    },
-    'PAUSED': {
-        'play': /* => */ 'PLAYING',
-        'stop': /* => */ 'STOPPED'
-    }
-});
-
-radio.onleaveSTOPPED = function (event, oldState, newState) {
-    // ...
-};
-
-radio.onenterSTOPPED = function (event, oldState, newState) {
-    // ...
-};
-
-radio.onPLAYING = function (event, oldState, newState) {
-    // ...
-};
-
-radio.onPAUSED = function (event, oldState, newState) {
-    // ...
-};
 ```
 
 ## jsFiddles
