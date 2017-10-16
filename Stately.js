@@ -167,6 +167,22 @@
                     }
 
                     return this;
+                },
+
+                on: function on(action, event, callback) {
+                    var hook;
+
+                    if (typeof callback === 'undefined') {
+
+                        callback = event;
+
+                        event = undefined;
+
+                    }
+
+                    hook = (typeof event === 'undefined') ? action : action + event;
+
+                    this['on' + hook] = callback;
                 }
             },
 
