@@ -99,14 +99,14 @@
 
                     onLeaveState = resolveSpecialEventFn(lastState.name, "onLeave");
 
-                    if (onLeaveState && typeof onLeaveState === 'function') {
+                    if (onLeaveState && typeof onLeaveState === 'function' && lastState.name != currentState.name) {
 
                         onLeaveState.call(stateStore, eventName, lastState.name, currentState.name);
                     }
 
                     onEnterState = resolveSpecialEventFn(currentState.name, "onEnter");
 
-                    if (onEnterState && typeof onEnterState === 'function') {
+                    if (onEnterState && typeof onEnterState === 'function' && lastState.name != nextState.name) {
 
                         onEnterState.call(stateStore, eventName, lastState.name, nextState.name);
                     }
@@ -186,15 +186,13 @@
 
                         eventValue = stateMachine;
 
-                    } else if (toString.call(eventValue) === '[object Object]') {
+                    } else if (eventValue.constructor === Array) {
 
-                        nextState = (eventValue === stateStore ? currentState : eventValue);
+                        if (typeof eventValue[0] === 'undefined') {
 
-                        eventValue = stateMachine;
+                            nextState = currentState;
 
-                    } else if (toString.call(eventValue) === '[object Array]' && eventValue.length >= 1) {
-
-                        if (typeof eventValue[0] === 'string') {
+                        } else if (typeof eventValue[0] === 'string') {
 
                             nextState = stateStore[eventValue[0]];
 
@@ -204,7 +202,14 @@
 
                         }
 
-                        eventValue = eventValue[1];
+                        eventValue = eventValue[1] || stateMachine;
+
+                    } else if (toString.call(eventValue) === '[object Object]') {
+
+                        nextState = (eventValue === stateStore ? currentState : eventValue);
+
+                        eventValue = stateMachine;
+
                     }
 
                     onAfterEvent = resolveSpecialEventFn(currentState.name, "onAfter" + eventName);
