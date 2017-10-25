@@ -146,6 +146,11 @@
 
                 return function event() {
 
+                    var args = [];
+                    for (var _i = 0; _i < arguments.length; _i++) {
+                        args[_i] = arguments[_i];
+                    }
+
                     var
                         onBeforeEvent,
 
@@ -159,7 +164,7 @@
 
                         if (nextEvent) {
 
-                            eventValue = nextEvent.apply(stateStore, arguments);
+                            eventValue = nextEvent.apply(stateStore, args);
                         }
 
                         return eventValue;
@@ -172,7 +177,7 @@
                         onBeforeEvent.call(stateStore, eventName, currentState.name, currentState.name);
                     }
 
-                    eventValue = stateStore[stateName][eventName].apply(stateStore, arguments);
+                    eventValue = stateStore[stateName][eventName].apply(stateStore, args);
 
                     if (typeof eventValue === 'undefined') {
 
