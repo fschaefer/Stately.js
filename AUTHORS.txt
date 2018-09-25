@@ -1,5 +1,6 @@
-Authors ordered by first contribution.
+﻿Authors ordered by first contribution.
 
 Florian Schäfer <florian.schaefer@gmail.com>
 Rowan Udell <rowanu@gmail.com>
 Cory Watson <cory.andrew.1988@gmail.com>
+Alessandro Vergani <alessandro.vergani@gmail.com>
