@@ -36,11 +36,20 @@
             return InvalidStateError;
         })();
 
-    function Stately(statesObject, initialStateName) {
+    function Stately(statesObject, initialStateName, options) {
 
         if (typeof statesObject === 'function') {
 
             statesObject = statesObject();
+        }
+
+        if (typeof initialStateName !== 'undefined' && typeof initialStateName !== 'string' && toString.call(initialStateName) === '[object Object]') {
+            options = initialStateName;
+            initialStateName = undefined;
+        }
+
+        if (typeof options === 'undefined') {
+            options = {};
         }
 
         if (toString.call(statesObject) !== '[object Object]') {
@@ -134,7 +143,15 @@
 
             },
 
-            stateMachine = {
+            stateMachine = options.publicSetState ? {
+
+                setMachineState: stateStore.setMachineState,
+
+                getMachineState: stateStore.getMachineState,
+
+                getMachineEvents: stateStore.getMachineEvents
+
+            } : {
 
                 getMachineState: stateStore.getMachineState,
 
